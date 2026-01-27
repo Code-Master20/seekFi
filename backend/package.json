@@ -1,0 +1,23 @@
+{
+  "name": "class-mate",
+  "version": "1.0.0",
+  "description": "classMate-a social media-like website for peoples' interaction",
+  "keywords": [
+    "classmate",
+    "class-mate",
+    "classMate",
+    "Classmate",
+    "ClassMate",
+    "CLASSMATE"
+  ],
+  "license": "ISC",
+  "author": "Sahidur Miah",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
