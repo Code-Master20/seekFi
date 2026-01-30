@@ -15,7 +15,9 @@ const signUp = async (req, res, _) => {
 
     const userCreated = await User.create({ username, email, password });
     await temporaryUser.deleteMany({ email });
-    res.status(200).json(userCreated);
+    const logged_In_Track_Tkn = await userCreated.generateLogTrackTkn();
+    console.log(logged_In_Track_Tkn);
+    return res.status(200).json(userCreated);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error creating user", error });
