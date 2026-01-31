@@ -3,29 +3,39 @@ const bcrypt = require("bcryptjs");
 const EmailOtp = require("../../models/emailOtp.model");
 const TemporaryUser = require("../../models/temporaryUser.model");
 const User = require("../../models/user.model");
+const SuccessHandler = require("../../utils/successHandler.util");
+const ErrorHandler = require("../../utils/errorHandler.util");
 
 const otpVerify = async (req, res, next) => {
   try {
     const { email, otp, purpose } = req.body;
 
     if (!purpose) {
-      return res.status(400).json({ message: "OTP purpose is required" });
+      return new ErrorHandler(400, "otp purpose is required")
+        .log("otp purpose", "otp purpose is not provided")
+        .send(res);
     }
 
     const otpRecord = await EmailOtp.findOne({ email, purpose });
     if (!otpRecord) {
-      return res.status(400).json({ message: "OTP expired or invalid" });
+      return new ErrorHandler(400, "otp is invalid or expired")
+        .log("Otp disruptured", "otp is expired or invalid")
+        .send(res);
     }
 
     const isValid = await otpRecord.compareOtp(otp);
     if (!isValid) {
-      return res.status(400).json({ message: "Invalid OTP" });
+      return new ErrorHandler(400, "invalid OTP")
+        .log("otp vadidation", "otp is invalid")
+        .send(res);
     }
 
     if (purpose === "signup") {
       const tempUser = await TemporaryUser.findOne({ email });
       if (!tempUser) {
-        return res.status(400).json({ message: "No pending signup found" });
+        return new ErrorHandler(400, "you are signing up")
+          .log("sign up pending", "no sign up is pending")
+          .send(res);
       }
       req.tempUser = tempUser;
     }
@@ -40,8 +50,9 @@ const otpVerify = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("otpVerify error:", error);
-    return res.status(500).json({ message: "OTP verification failed" });
+    return new ErrorHandler(500, "internal server error")
+      .log("otp verification failed", error)
+      .send(res);
   }
 };
 

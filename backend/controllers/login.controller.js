@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const SuccessHandler = require("../utils/successHandler.util");
+const ErrorHandler = require("../utils/errorHandler.util");
 
 const logIn = async (req, res, _) => {
   try {
@@ -13,19 +15,17 @@ const logIn = async (req, res, _) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({
-      success: true,
-      user: {
-        id: userFound._id,
-        username,
-        email,
-        creator,
-      },
-      message: "logged in successfull",
-    });
+    const data = {
+      id: userFound._id,
+      username,
+      email,
+      creator,
+    };
+    return new SuccessHandler(200, "log-in successfully done", data).send(res);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return new ErrorHandler(500, "Internal server error")
+      .log("log in failed", error)
+      .send(res);
   }
 };
 

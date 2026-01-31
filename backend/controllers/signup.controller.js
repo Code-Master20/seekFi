@@ -1,5 +1,7 @@
 const User = require("../models/user.model");
 const TemporaryUser = require("../models/temporaryUser.model");
+const SuccessHandler = require("../utils/successHandler.util");
+const ErrorHandler = require("../utils/errorHandler.util");
 
 const signUp = async (req, res) => {
   try {
@@ -7,10 +9,12 @@ const signUp = async (req, res) => {
 
     const userExist = await User.findOne({ email });
     if (userExist) {
-      return res.status(409).json({
-        success: false,
-        message: "You already have an account with this email. Please log in.",
-      });
+      return new ErrorHandler(
+        409,
+        "You already have an account with this email",
+      )
+        .log("user pre existed", "user is already registered")
+        .send(res);
     }
 
     const userCreated = await User.create({ username, email, password });
@@ -24,19 +28,17 @@ const signUp = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(201).json({
-      success: true,
-      user: {
-        id: userCreated._id,
-        username: userCreated.username,
-        email: userCreated.email,
-        creator: userCreated.creator,
-      },
-      message: "you are signed up successfully",
-    });
+    const data = {
+      id: userCreated._id,
+      username: userCreated.username,
+      email: userCreated.email,
+      creator: userCreated.creator,
+    };
+    return new SuccessHandler(201, "sign-up successfully done", data).send(res);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating user" });
+    return new ErrorHandler(500, "internal server error")
+      .log("user not created", error)
+      .send(res);
   }
 };
 

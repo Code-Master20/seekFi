@@ -2,6 +2,8 @@
 const TemporaryUser = require("../../models/temporaryUser.model");
 const sendOtp = require("../../services/sendOtp.service");
 const User = require("../../models/user.model");
+const ErrorHandler = require("../../utils/errorHandler.util");
+const SuccessHandler = require("../../utils/successHandler.util");
 
 // ================= SIGN UP OTP =================
 const sendingOtpForSignUp = async (req, res) => {
@@ -21,16 +23,13 @@ const sendingOtpForSignUp = async (req, res) => {
       purpose: "signup",
     });
 
-    return res.status(200).json({
-      success: true,
-      message: `Verification code sent to ${email}`,
-    });
+    return new SuccessHandler(200, `verification code sent to ${email}`).send(
+      res,
+    );
   } catch (error) {
-    console.error("sendingOtpToEmail error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to send verification code",
-    });
+    return new ErrorHandler(500, "failed to send verification code")
+      .log("sending otp for sign up error", error)
+      .send(res);
   }
 };
 
@@ -40,33 +39,34 @@ const sendingOtpForLogIn = async (req, res) => {
     const { email, password } = req.body;
 
     const userExisted = await User.findOne({ email });
-    if (!userExisted)
-      return res
-        .status(404)
-        .json({ success: false, message: "account not found" });
+    if (!userExisted) {
+      return new ErrorHandler(404, "account not found")
+        .log(
+          "account error",
+          "account has not been created with this email yet",
+        )
+        .send(res);
+    }
 
     const isMatch = await userExisted.comparePassword(password);
-    if (!isMatch)
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
+    if (!isMatch) {
+      return new ErrorHandler(401, "invalid email or password")
+        .log("email or password mis-matched", "invalid email or password")
+        .send(res);
+    }
 
     await sendOtp({
       email,
       purpose: "login",
     });
 
-    return res.status(200).json({
-      success: true,
-      message: `Verification code sent to ${email}`,
-    });
+    return new SuccessHandler(200, `verification code sent to ${email}`).send(
+      res,
+    );
   } catch (error) {
-    console.error("sendingOtpForLogIn error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to send verification code",
-    });
+    return new ErrorHandler(500, "failed to send verification code")
+      .log("sending otp for log-in error", error)
+      .send(res);
   }
 };
 
