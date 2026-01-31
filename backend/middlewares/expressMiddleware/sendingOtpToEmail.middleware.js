@@ -45,7 +45,7 @@ const sendingOtpForLogIn = async (req, res) => {
         .status(404)
         .json({ success: false, message: "account not found" });
 
-    const isMatch = await User.comparePassword(password);
+    const isMatch = await userExisted.comparePassword(password);
     if (!isMatch)
       return res.status(401).json({
         success: false,

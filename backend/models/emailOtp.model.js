@@ -28,8 +28,6 @@ const emailOtpSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-emailOtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
 emailOtpSchema.pre("save", async function () {
   try {
     if (!this.isModified("otp")) return;
@@ -45,7 +43,7 @@ emailOtpSchema.pre("save", async function () {
 
 emailOtpSchema.methods.compareOtp = async function (enteredOtp) {
   try {
-    const comparedOtp = await bcrypt.compare(enteredOtp, this.otp);
+    const comparedOtp = await bcrypt.compare(String(enteredOtp), this.otp);
     return comparedOtp;
   } catch (error) {
     console.log("otp could not be compared");
@@ -53,4 +51,7 @@ emailOtpSchema.methods.compareOtp = async function (enteredOtp) {
   }
 };
 
-module.exports = mongoose.model("EmailOtp", emailOtpSchema);
+emailOtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+const EmailOtp = mongoose.model("EmailOtp", emailOtpSchema);
+module.exports = EmailOtp;

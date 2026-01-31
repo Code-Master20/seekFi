@@ -14,4 +14,6 @@ router.get(
   sendingOtpToEmail.sendingOtpForLogIn,
 );
 
-router.post("/log-in/verify-otp", otpVerify, login);
+router.post("/log-in/verify-otp", otpVerify, logIn);
+
+module.exports = router;

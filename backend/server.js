@@ -3,6 +3,7 @@ dotenv.config();
 const express = require("express");
 const connectDB = require("./utils/database.util");
 const signUpRoute = require("./routers/signup.router");
+const logInRoute = require("./routers/login.router");
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //all routes
 app.use("/api/auth", signUpRoute);
+app.use("/api/auth", logInRoute);
 app.get("/", (req, res, next) => {
   res.send("hello from server");
 });
