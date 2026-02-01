@@ -37,16 +37,45 @@ const otpVerify = async (req, res, next) => {
           .log("sign up pending", "no sign up is pending")
           .send(res);
       }
+
       req.tempUser = tempUser;
     }
-
-    await EmailOtp.deleteMany({ email, purpose });
 
     if (purpose === "login") {
       const userData = await User.findOne({ email }).select("-password");
       //const userData = await User.findOne({ email }, { password: 0 });
       req.user = userData;
     }
+
+    if (purpose === "password-reset") {
+      const tempUser = await TemporaryUser.findOne({ email });
+      if (!tempUser) {
+        return new ErrorHandler(400, "Otp is expired")
+          .log(
+            "user deleted",
+            "user already deleted from TemporaryUser.schema before the password reset process completd",
+          )
+          .send(res);
+      }
+
+      const userFound = await User.findOne({ email: tempUser.email });
+      if (!userFound) {
+        return new ErrorHandler(404, "Account not found")
+          .log(
+            "account not found :",
+            "account not fount due to some internal error",
+          )
+          .send(res);
+      }
+
+      userFound.password = tempUser.password;
+      await userFound.save();
+      const userData = await User.findOne({ email }).select("-password");
+      await TemporaryUser.deleteMany({ email });
+      req.user = userData;
+    }
+
+    await EmailOtp.deleteMany({ email, purpose });
 
     next();
   } catch (error) {

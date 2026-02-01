@@ -47,7 +47,6 @@ const sendingOtpForLogIn = async (req, res) => {
         )
         .send(res);
     }
-    console.log(userExisted);
     const isMatch = await userExisted.comparePassword(password);
 
     if (!isMatch) {
@@ -71,4 +70,24 @@ const sendingOtpForLogIn = async (req, res) => {
   }
 };
 
-module.exports = { sendingOtpForSignUp, sendingOtpForLogIn };
+//===============PASSWORD RESET OTP==============
+const sendingOtpForPassReset = async (req, res) => {
+  try {
+    const { username, email, password } = req.user;
+    await sendOtp({ email, purpose: "reset-password" });
+
+    return new SuccessHandler(
+      200,
+      `verification code sent to ${email} for password finalization`,
+    ).send(res);
+  } catch (error) {
+    return new ErrorHandler(500, "Internal server error")
+      .log("otp failure :", "otp sent failed")
+      .send(res);
+  }
+};
+module.exports = {
+  sendingOtpForSignUp,
+  sendingOtpForLogIn,
+  sendingOtpForPassReset,
+};

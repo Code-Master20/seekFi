@@ -8,6 +8,7 @@ const signUp = async (req, res) => {
     const { username, email, password } = req.tempUser;
 
     const userExist = await User.findOne({ email });
+
     if (userExist) {
       return new ErrorHandler(
         409,

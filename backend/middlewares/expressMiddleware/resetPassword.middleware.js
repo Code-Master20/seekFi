@@ -1,8 +1,10 @@
 const express = require("express");
 const User = require("../../models/user.model");
 const ErrorHandler = require("../../utils/errorHandler.util");
+const sendOtp = require("../../services/sendOtp.service");
+const TemporaryUser = require("../../models/temporaryUser.model");
 
-const resetPasswordWithRememberence = async (req, res, next) => {
+const resetPasswordWithOldPassword = async (req, res, next) => {
   try {
     const { email, password, newPassword } = req.body;
 
@@ -42,8 +44,30 @@ const resetPasswordWithRememberence = async (req, res, next) => {
   }
 };
 
-const resetPasswordFromCrush = async (req, res, next) => {
+const resetPasswordWithOtp = async (req, res, next) => {
   try {
+    const { email, password } = req.body;
+    const userExisted = await User.findOne({ email });
+
+    if (!userExisted) {
+      return new ErrorHandler(404, "please provide correct email address")
+        .log("non-existed email :", "email is not registered to any account")
+        .send(res);
+    }
+
+    await TemporaryUser.create({
+      username: userExisted.username,
+      email,
+      password,
+    });
+
+    req.user = {
+      username: userExisted.username,
+      email,
+      password,
+    };
+
+    next();
   } catch (error) {}
 };
-module.exports = { resetPasswordFromCrush, resetPasswordWithRememberence };
+module.exports = { resetPasswordWithOtp, resetPasswordWithOldPassword };
