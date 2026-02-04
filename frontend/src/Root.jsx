@@ -4,14 +4,12 @@ import { HeaderOne } from "./components/Header/HeaderOne";
 import { HeaderTwo } from "./components/Header/HeaderTwo";
 import { Outlet } from "react-router-dom";
 
-function Root() {
+export const Root = () => {
   return (
     <div>
       <HeaderOne />
       <HeaderTwo />
-      <Outlet />
+      {/* <Outlet /> */}
     </div>
   );
-}
-
-export default Root;
+};
