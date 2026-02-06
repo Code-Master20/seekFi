@@ -9,7 +9,7 @@ export const Root = () => {
     <div className="root-container">
       <HeaderOne />
       <HeaderTwo />
-      {/* <Outlet /> */}
+      <Outlet />
     </div>
   );
 };

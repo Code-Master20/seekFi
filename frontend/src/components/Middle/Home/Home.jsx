@@ -1,3 +1,4 @@
+import styles from "./Home.module.css";
 export const Home = () => {
-  return <main>Home Sections</main>;
+  return <main className={styles["main-container"]}>Home Sections</main>;
 };
