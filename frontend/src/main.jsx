@@ -15,6 +15,7 @@ import { PostFeed } from "./components/Middle/PostFeed/PostFeed.jsx";
 import { PeopleHub } from "./components/Middle/PeopleHub/PeopleHub.jsx";
 import { NotificationCenter } from "./components/Middle/NotificationCenter/NotificationCenter.jsx";
 import { Profile } from "./components/Middle/ProfilePage/Profile.jsx";
+import { LogIn } from "./components/Middle/ProfilePage/LogIn.jsx";
 import { Provider } from "react-redux";
 import { store } from "./store/store.js";
 
@@ -22,7 +23,7 @@ import { store } from "./store/store.js";
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
-      <Route index element={<HomeFeed />}></Route>
+      <Route index element={<LogIn />}></Route> {/*<HomeFeed />*/}
       <Route path="video-feed" element={<VideoFeed />}></Route>
       <Route path="photo-feed" element={<PhotoFeed />}></Route>
       <Route path="post-feed" element={<PostFeed />}></Route>

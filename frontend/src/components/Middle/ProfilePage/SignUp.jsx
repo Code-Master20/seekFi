@@ -1,3 +1,9 @@
 export const SignUp = () => {
-  return <main>Sign Up Page</main>;
+  return (
+    <main>
+      <section>
+        <article>sign up pages</article>
+      </section>
+    </main>
+  );
 };

@@ -16,7 +16,8 @@ const frontend_uri = process.env.FRONTEND_URI || "http://localhost:5173";
 
 const corsOptions = {
   origin: frontend_uri,
-  methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
 };
 app.use(cors(corsOptions));
 app.use(cookieParser());
