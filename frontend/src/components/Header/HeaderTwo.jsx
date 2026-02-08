@@ -10,7 +10,7 @@ import profilePic from "../../assets/profilePic.jpg";
 import { useState } from "react";
 
 export const HeaderTwo = () => {
-  const [isActive, setActive] = useState("");
+  // const [isActive, setActive] = useState("");
   return (
     <header className={styles["header-container"]}>
       <nav className={styles["header-first-child"]}>
@@ -21,37 +21,37 @@ export const HeaderTwo = () => {
           <CiHome />
         </NavLink>
         <NavLink
-          to="#"
-          className={`(${isActive}) => ${isActive ? styles.iconActived : ""}`}
+          to="/video-feed"
+          className={({ isActive }) => (isActive ? styles.iconActived : "")}
         >
           <PiVideoLight />
         </NavLink>
         <NavLink
-          to="#"
+          to="/photo-feed"
           className={({ isActive }) => (isActive ? styles.iconActived : "")}
         >
           <CiImageOn />
         </NavLink>
         <NavLink
-          to="#"
+          to="/post-feed"
           className={({ isActive }) => (isActive ? styles.iconActived : "")}
         >
           <TbPhotoVideo />
         </NavLink>
         <NavLink
-          to="#"
+          to="/people"
           className={({ isActive }) => (isActive ? styles.iconActived : "")}
         >
           <BsPeople />
           {/* <TfiBarChart /> */}
         </NavLink>
         <NavLink
-          to="#"
+          to="/notifications"
           className={({ isActive }) => (isActive ? styles.iconActived : "")}
         >
           <IoIosNotificationsOutline />
         </NavLink>
-        <NavLink to="#">
+        <NavLink to="/profile">
           <img src={profilePic} alt="me" />
         </NavLink>
       </nav>
