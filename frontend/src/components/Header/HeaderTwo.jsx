@@ -15,7 +15,7 @@ export const HeaderTwo = () => {
     <header className={styles["header-container"]}>
       <nav className={styles["header-first-child"]}>
         <NavLink
-          to="/"
+          to="/home-feed"
           className={({ isActive }) => (isActive ? styles.iconActived : "")}
         >
           <CiHome />

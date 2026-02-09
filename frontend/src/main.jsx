@@ -8,14 +8,14 @@ import {
   RouterProvider,
   createRoutesFromElements,
 } from "react-router-dom";
-import { HomeFeed } from "./components/Middle/HomeFeed/HomeFeed.jsx";
-import { VideoFeed } from "./components/Middle/VideoFeed/VideoFeed.jsx";
-import { PhotoFeed } from "./components/Middle/PhotoFeed/PhotoFeed.jsx";
-import { PostFeed } from "./components/Middle/PostFeed/PostFeed.jsx";
-import { PeopleHub } from "./components/Middle/PeopleHub/PeopleHub.jsx";
-import { NotificationCenter } from "./components/Middle/NotificationCenter/NotificationCenter.jsx";
-import { Profile } from "./components/Middle/ProfilePage/Profile.jsx";
-import { LogIn } from "./components/Middle/ProfilePage/LogIn.jsx";
+import { HomeFeed } from "./pages/HomeFeed/HomeFeed.jsx";
+import { VideoFeed } from "./pages/VideoFeed/VideoFeed.jsx";
+import { PhotoFeed } from "./pages/PhotoFeed/PhotoFeed.jsx";
+import { PostFeed } from "./pages/PostFeed/PostFeed.jsx";
+import { PeopleHub } from "./pages/PeopleHub/PeopleHub.jsx";
+import { NotificationCenter } from "./pages/NotificationCenter/NotificationCenter.jsx";
+import { Profile } from "./pages/ProfilePage/Profile.jsx";
+import { LogIn } from "./pages/ProfilePage/LogIn.jsx";
 import { Provider } from "react-redux";
 import { store } from "./store/store.js";
 
@@ -23,7 +23,8 @@ import { store } from "./store/store.js";
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
-      <Route index element={<LogIn />}></Route> {/*<HomeFeed />*/}
+      <Route index element={<LogIn />} />
+      <Route path="home-feed" element={<HomeFeed />}></Route>
       <Route path="video-feed" element={<VideoFeed />}></Route>
       <Route path="photo-feed" element={<PhotoFeed />}></Route>
       <Route path="post-feed" element={<PostFeed />}></Route>

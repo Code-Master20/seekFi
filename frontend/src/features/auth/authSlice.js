@@ -2,6 +2,7 @@
 //slice directory name is authSlice
 //Each slice has initial state and reducers(inside we defined logic)
 import { createSlice } from "@reduxjs/toolkit";
+import { checkMe } from "./authThunks";
 
 //initial state
 const initialState = {
@@ -9,12 +10,14 @@ const initialState = {
   isAuthenticated: false,
   loading: false,
   error: null,
+  checked: false, // 👈 VERY IMPORTANT
 };
 
 //reducers, an object of functions that describe how the state changes when actions are dispatched
 //fn receives current state from the initialState initially and/or receives action through
 // action dispatcher from components
 //and update the currrent states with action.payload
+
 const reducers = {
   loginStart(state) {
     // state is basically initialState's prototypic instance similar to the this.user we defined in constructor
@@ -22,7 +25,6 @@ const reducers = {
     state.loading = true;
     state.error = null;
   },
-
   loginSuccess(state, action) {
     state.loading = false;
     state.user = action.payload;
@@ -35,16 +37,37 @@ const reducers = {
   logout(state) {
     state.user = null;
     state.isAuthenticated = false;
+    state.checked = true;
   },
+};
+
+const extraReducers = (builder) => {
+  builder
+    .addCase(checkMe.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(checkMe.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.isAuthenticated = true;
+      state.checked = true;
+    })
+    .addCase(checkMe.rejected, (state) => {
+      state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+      state.checked = true;
+    });
 };
 
 export const authSlice = createSlice({
   name: "auth", //to identify slice distinctly
   initialState,
   reducers,
+  extraReducers,
 });
 
-// export const { loginStart, loginSuccess, loginFailure, logout } =
-//   authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout } =
+  authSlice.actions;
 
-// export default authSlice.reducer;
+export default authSlice.reducer;
