@@ -29,7 +29,7 @@ export const LogIn = () => {
                   name="password"
                 />
               </div>
-              <div>
+              <div className={styles["btn-container"]}>
                 <button type="submit">log-in</button>
                 {!loggingSuccess && <button>sign-up</button>}
               </div>

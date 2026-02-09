@@ -21,7 +21,6 @@
 .main-container-second {
   width: 80vw;
   height: auto;
-  box-sizing: content-box;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,6 +29,7 @@
   border-radius: 2rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.7);
 }
 
 .main-container-third {
@@ -50,7 +50,8 @@
   color: white;
   font-size: clamp(2.5rem, 4vw, 4rem);
   text-transform: capitalize;
-  /* background-color: brown; */
+  text-shadow: 1px 2.5px 6px rgba(237, 243, 243, 0.7);
+  -webkit-text-stroke: 0.3px red;
 }
 
 .login-form-container {
@@ -81,14 +82,55 @@
   flex-direction: column;
   justify-content: center;
   border-radius: 0.5rem;
+  transition: box-shadow 0.3s ease-out;
 }
+
+/* :focus-within will trigger focuss for div(.input-elm) if any content within div(.input-elm) is focussed */
+/* just note it:- to make div focussable use tabIndex="0" in div-element 
+but here not needed since I want focuss behaviour, on focussing inner focussable children*/
+.login-form-container form .input-elm:focus-within {
+  box-shadow: 0px 0px 8px 0.2px rgb(42, 254, 0);
+}
+
 .login-form-container form .input-elm label {
   padding-left: 0.3rem;
   color: white;
   font-size: clamp(1.5rem, 4vw, 3rem);
 }
+
 .login-form-container form .input-elm input {
   padding: 0.5rem 1rem;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
+  -webkit-user-drag: none;
+  outline: none;
+  border: none;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  column-gap: 1.5rem;
+}
+
+.btn-container button {
+  text-align: center;
+  background-color: chocolate;
+  border: none;
+  padding: 0.2rem 0.4rem;
+  color: white;
+  border-radius: 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    box-shadow 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+.btn-container button:hover {
+  box-shadow: 0px 0px 8px 0.2px rgb(42, 254, 0);
+}
+.btn-container button:active {
+  transform: scale(1.02);
 }

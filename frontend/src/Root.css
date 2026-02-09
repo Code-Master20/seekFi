@@ -16,3 +16,29 @@
   align-items: center;
   /* justify-content: space-between; */
 }
+
+/* 
+input {
+  border: 0.01px solid rgba(128, 128, 128, 0.3);
+} 
+*/
+
+/* 
+input:focus {
+  outline-width: 0.01px;
+} 
+*/
+
+/* 
+input:focus {
+  outline-style: solid;
+  outline-top-style: none;
+} 
+*/
+
+/* 
+input:focus {
+  outline-color: rgb(77, 255, 0);
+   outline-offset: 0.001px;
+} 
+*/
