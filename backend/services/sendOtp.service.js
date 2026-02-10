@@ -1,6 +1,7 @@
 // services/sendOtp.service.js
 const EmailOtp = require("../models/emailOtp.model");
-const nodeMailerEmailService = require("../utils/nodeMailerEmailService.util");
+// const nodeMailerEmailService = require("../utils/nodeMailerEmailService.util");
+const sendGmailApiEmail = require("../utils/sendGmailApiEmail.util");
 
 const sendOtp = async ({ email, purpose }) => {
   let otp = "";
@@ -17,7 +18,7 @@ const sendOtp = async ({ email, purpose }) => {
     purpose,
   });
 
-  await nodeMailerEmailService({
+  /*await nodeMailerEmailService({
     to: email,
     subject: "Email verification code",
     text: `Welcome to the world of ClassMate`,
@@ -25,6 +26,16 @@ const sendOtp = async ({ email, purpose }) => {
       <h3>Your verification code</h3>
       <p><b>${otp}</b></p>
     `,
+  });
+  */
+
+  await sendGmailApiEmail({
+    to: email,
+    subject: "Email Verification Code",
+    html: `
+    <h2>Your verification Code</h2>
+    <p><b>${otp}</b></p>
+  `,
   });
 };
 
