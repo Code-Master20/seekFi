@@ -4,13 +4,16 @@ const nodeMailerEmailService = async ({ to, subject, text, html }) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
+        type: "OAuth2",
         user: process.env.MY_EMAIL,
-        pass: process.env.EMAIL_APP_PASSWORD,
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        refreshToken: process.env.GMAIL_REFRESH_TOKEN,
       },
     });
 
     const verificationCode = await transporter.sendMail({
-      from: `"ClassMate" <${process.env.MY_EMAIL}>`,
+      from: `"seekFi" <${process.env.MY_EMAIL}>`,
       to,
       subject,
       text,
