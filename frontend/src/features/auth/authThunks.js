@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const checkMe = createAsyncThunk("auth/checkMe", async (_, thunkAPI) => {
   try {
-    const res = await fetch("http://localhost:4040/api/auth/me", {
+    const res = await fetch("https://seekfi.onrender.com/api/auth/me", {
       credentials: "include",
     });
 
@@ -19,7 +19,7 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ username, email, password }, thunkAPI) => {
     try {
-      const res = await fetch("http://localhost:4040/api/auth/login", {
+      const res = await fetch("https://seekfi.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
