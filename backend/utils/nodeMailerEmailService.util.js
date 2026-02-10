@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+
 const nodeMailerEmailService = async ({ to, subject, text, html }) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -12,7 +13,7 @@ const nodeMailerEmailService = async ({ to, subject, text, html }) => {
       },
     });
 
-    const verificationCode = await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: `"seekFi" <${process.env.MY_EMAIL}>`,
       to,
       subject,
@@ -20,7 +21,7 @@ const nodeMailerEmailService = async ({ to, subject, text, html }) => {
       html,
     });
 
-    return verificationCode;
+    return info;
   } catch (error) {
     console.error("email Error", error);
     throw error;
