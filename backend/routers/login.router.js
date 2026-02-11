@@ -8,7 +8,7 @@ const sendingOtpToEmail = require("../middlewares/expressMiddleware/sendingOtpTo
 const logIn = require("../controllers/login.controller.js");
 const otpVerify = require("../middlewares/expressMiddleware/otpVerify.middleware.js");
 
-router.get(
+router.post(
   "/log-in",
   zodyCredentialValidator(logInZodSchema),
   sendingOtpToEmail.sendingOtpForLogIn,

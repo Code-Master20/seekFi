@@ -12,7 +12,7 @@ const logIn = async (req, res, _) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProd,
-      sameSite: isProd ? "none" : "strict", // or "none" if frontend is on another domain
+      sameSite: isProd ? "none" : "lax", // or "none" if frontend is on another domain
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
