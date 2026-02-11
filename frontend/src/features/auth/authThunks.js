@@ -1,46 +1,48 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const checkMe = createAsyncThunk("auth/checkMe", async (_, thunkAPI) => {
+//========================tracking if user is already logged in==========================
+export const checkMe = createAsyncThunk("auth/isMe", async (_, thunkAPI) => {
   try {
-    const res = await fetch("https://seekfi.onrender.com/api/auth/me", {
-      credentials: "include",
+    const response = await fetch("https://seekfi.onrender.com/api/auth/me", {
+      credentials: "include", // ensures cookies are sent
     });
 
-    if (!res.ok) throw new Error("Not authenticated");
+    const decodedResponse = await response.json();
+    if (!response.ok) {
+      const brokenResponse = { ...decodedResponse };
+      return thunkAPI.rejectWithValue(brokenResponse);
+    }
+    return decodedResponse;
+    /*
+     =========== From backend ===========:- 
+      ErrorHandler structure --->{
+      success:false,
+      message:"xyz string"
+      }
+      const { message, success } = brokenResponse;
+      message:"Not Authenticated";
+      success:false;
+      status:401;
 
-    const data = await res.json();
-    return data.data.user;
-  } catch (err) {
-    return thunkAPI.rejectWithValue("Not logged in");
+    }
+
+    ============ From backend =============:-
+    successHandler structure --->{
+    success:true, 
+    data : {keys:values}, 
+    successMessage:"xyz string"
+    }
+     status: 200
+     success :true, 
+     data: {
+            email, 
+            userId
+      } since in user.model.js in backend I used  "id and email" as payloads during generateLoggedTrackTkn
+
+      successMesage = "Successfully Authenticated"
+    */
+    // const { success, data, successMessage } = decodedResponse;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
   }
 });
-
-export const loginUser = createAsyncThunk(
-  "auth/loginUser",
-  async ({ username, email, password }, thunkAPI) => {
-    try {
-      const res = await fetch("https://seekfi.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // 🔴 VERY IMPORTANT
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Login failed");
-      }
-
-      const data = await res.json();
-      return data.data.user; // backend user payload
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  },
-);

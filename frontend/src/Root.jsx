@@ -1,32 +1,32 @@
 import "./Root.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { checkMe } from "./features/auth/authThunks";
 import { HeaderOne } from "./components/Header/HeaderOne";
 import { HeaderTwo } from "./components/Header/HeaderTwo";
 import { Outlet } from "react-router-dom";
+import { checkMe } from "./features/auth/authThunks";
+import { LogIn } from "./pages/ProfilePage/LogIn";
+import { SignUp } from "./pages/ProfilePage/SignUp";
 
 export const Root = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, checked, loading } = useSelector(
-    (state) => state.auth,
-  );
-
   useEffect(() => {
     dispatch(checkMe());
   }, [dispatch]);
 
-  // Wait until /me finishes
-  if (!checked || loading) {
-    return <p>Checking authentication...</p>;
-  }
+  const { loading, isAuthenticated, error, user } = useSelector((state) => {
+    return state.auth;
+  });
 
-  // Not logged in → ONLY login page
-  if (!isAuthenticated) {
-    return <Outlet />; // this will render LogIn
-  }
+  const isLoggingTriggered = useSelector(
+    (state) => state.auth.isLoggingTriggered,
+  );
 
-  // Logged in → headers + pages
+  if (loading) return <div className="">authentication checking...</div>;
+
+  if (!isAuthenticated && isLoggingTriggered) return <LogIn />;
+  if (!isLoggingTriggered) return <SignUp />;
+
   return (
     <div className="root-container">
       <HeaderOne />
