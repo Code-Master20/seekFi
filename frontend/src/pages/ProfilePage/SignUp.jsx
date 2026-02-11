@@ -1,9 +1,13 @@
 import { useState } from "react";
 import styles from "./LogIn.module.css";
+import { useDispatch } from "react-redux";
+import { isLoggingTask } from "../../features/auth/authSlice";
 
 export const SignUp = () => {
+  const dispatch = useDispatch();
   const returnToLogIn = () => {
     localStorage.setItem("isLoggingTriggered", JSON.stringify(true));
+    dispatch(isLoggingTask(true));
   };
   return (
     <main className={styles["main-container-first"]}>

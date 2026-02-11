@@ -9,6 +9,7 @@ export const LogIn = () => {
 
   const returnToSignUp = () => {
     localStorage.setItem("isLoggingTriggered", JSON.stringify(false));
+    dispatch(isLoggingTask(false));
   };
   return (
     <main className={styles["main-container-first"]}>
