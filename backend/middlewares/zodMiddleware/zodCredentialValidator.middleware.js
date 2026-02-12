@@ -42,7 +42,7 @@ const zodyCredentialValidator = (zodSchema) => async (req, res, next) => {
         .send(res);
     }
 
-    return new ErrorHandler(500, "Internal Zod Validation failure")
+    return new ErrorHandler(500, "Internal zod Validation failure")
       .log("validation error", error)
       .send(res);
   }
