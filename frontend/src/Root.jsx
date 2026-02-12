@@ -23,9 +23,10 @@ export const Root = () => {
     (state) => state.auth.isLoggingTriggered,
   );
 
-  if (loading) return <div className="">authentication checking...</div>;
+  if (loading && !isLoggingTriggered)
+    return <div className="">authentication checking...</div>;
 
-  if (!isAuthenticated && isLoggingTriggered) return <LogIn/> ;//<OtpVerification />
+  if (!isAuthenticated && isLoggingTriggered) return <LogIn />; //<OtpVerification />
   if (!isLoggingTriggered) return <SignUp />;
 
   return (
