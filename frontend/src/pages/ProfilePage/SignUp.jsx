@@ -2,20 +2,58 @@ import { useState } from "react";
 import styles from "./LogIn.module.css";
 import { useDispatch } from "react-redux";
 import { isLoggingTask } from "../../features/auth/authSlice";
+import { signUpOtpReceived } from "../../features/auth/authThunks";
 
 export const SignUp = () => {
+  const [clientCredentials, setClientCredentials] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const dispatch = useDispatch();
+  //from sign-up-page to log-in-page toggling
   const returnToLogIn = () => {
     localStorage.setItem("isLoggingTriggered", JSON.stringify(true));
     dispatch(isLoggingTask(true));
   };
+
+  //receiving value from input-change field
+  const handleOnChange = (e) => {
+    // console.log(e.target)
+    const { name, value } = e.target;
+    setClientCredentials((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // trimming inputs before sending to the thunk
+    const { username, email, password } = clientCredentials;
+    const trimedClientCredentials = {
+      ...clientCredentials,
+      username: username.trim(),
+      email: email.trim(),
+      password: password.trim(),
+    };
+    dispatch(signUpOtpReceived(trimedClientCredentials)); //sending clientCredentials to thunk for sending request to the database with these credentials
+    setClientCredentials((prev) => ({
+      ...prev,
+      username: "",
+      email: "",
+      password: "",
+    }));
+  };
+
   return (
     <main className={styles["main-container-first"]}>
       <section className={styles["main-container-second"]}>
         <article className={styles["main-container-third"]}>
           <h1 className={styles["login-main-heading"]}>create account</h1>
           <div className={styles["login-form-container"]}>
-            <form action="#" autoComplete="off">
+            <form onSubmit={handleSubmit}>
               <div className={styles["input-elm"]}>
                 <label htmlFor="username">Username :</label>
                 <input
@@ -23,6 +61,8 @@ export const SignUp = () => {
                   type="text"
                   name="username"
                   placeholder="your username"
+                  value={clientCredentials.username}
+                  onChange={handleOnChange}
                 />
               </div>
 
@@ -34,6 +74,8 @@ export const SignUp = () => {
                   type="email"
                   name="email"
                   placeholder="your email"
+                  value={clientCredentials.email}
+                  onChange={handleOnChange}
                 />
               </div>
 
@@ -45,6 +87,8 @@ export const SignUp = () => {
                   type="password"
                   name="password"
                   placeholder="your password"
+                  value={clientCredentials.password}
+                  onChange={handleOnChange}
                 />
               </div>
 

@@ -7,6 +7,7 @@ import { Outlet } from "react-router-dom";
 import { checkMe } from "./features/auth/authThunks";
 import { LogIn } from "./pages/ProfilePage/LogIn";
 import { SignUp } from "./pages/ProfilePage/SignUp";
+import { OtpVerification } from "./components/OtpVerification/OtpVerification";
 
 export const Root = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ export const Root = () => {
 
   if (loading) return <div className="">authentication checking...</div>;
 
-  if (!isAuthenticated && isLoggingTriggered) return <LogIn />;
+  if (!isAuthenticated && isLoggingTriggered) return <LogIn/> ;//<OtpVerification />
   if (!isLoggingTriggered) return <SignUp />;
 
   return (

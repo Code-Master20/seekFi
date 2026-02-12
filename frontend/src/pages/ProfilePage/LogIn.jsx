@@ -1,23 +1,34 @@
 import { useState } from "react";
 import styles from "./LogIn.module.css";
-import { SignUp } from "./SignUp";
 import { useSelector, useDispatch } from "react-redux";
 import { isLoggingTask } from "../../features/auth/authSlice";
 
 export const LogIn = () => {
+  const [clientCredentials, setClientCredentials] = useState({
+    username:"",
+    email:"",
+    password:"",
+  });
+
   const dispatch = useDispatch();
+
 
   const returnToSignUp = () => {
     localStorage.setItem("isLoggingTriggered", JSON.stringify(false));
     dispatch(isLoggingTask(false));
   };
+
+  const handleSumbit = (e) => {
+    e.preventDefault();
+  }
+
   return (
     <main className={styles["main-container-first"]}>
       <section className={styles["main-container-second"]}>
         <article className={styles["main-container-third"]}>
           <h1 className={styles["login-main-heading"]}>please log in first</h1>
           <div className={styles["login-form-container"]}>
-            <form autoComplete="off">
+            <form onSubmit={handleSumbit} autoComplete="off">
               <div className={styles["input-elm"]}>
                 <label htmlFor="email">Email :</label>
                 <input

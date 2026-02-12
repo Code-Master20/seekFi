@@ -19,12 +19,13 @@ import { NotificationCenter } from "./pages/NotificationCenter/NotificationCente
 import { Profile } from "./pages/ProfilePage/Profile.jsx";
 import { LogIn } from "./pages/ProfilePage/LogIn.jsx";
 import { SignUp } from "./pages/ProfilePage/SignUp.jsx";
+import { OtpVerification } from "./components/OtpVerification/OtpVerification.jsx";
 
 //creating routes for different pages
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
-      <Route index element={<LogIn />} />
+      <Route index element={<LogIn/>} />  {/*<OtpVerification />*/}
       <Route index element={<SignUp />} />
       <Route path="home-feed" element={<HomeFeed />}></Route>
       <Route path="video-feed" element={<VideoFeed />}></Route>

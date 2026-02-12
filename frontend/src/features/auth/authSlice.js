@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { checkMe } from "./authThunks";
+import { checkMe, signUpOtpReceived } from "./authThunks";
 
 const isLoggingTriggered = JSON.parse(
   localStorage.getItem("isLoggingTriggered"),
@@ -7,13 +7,23 @@ const isLoggingTriggered = JSON.parse(
 
 const authSlice = createSlice({
   name: "auth",
+
   initialState: {
     user: null,
-    loading: false,
-    error: null,
     isAuthenticated: false,
     isLoggingTriggered,
+    loading: false,
+
+    errorMessage: null,
+    successMessage: null,
+
+    otp: {
+      sending: false,
+      sent: false,
+      verifying: false,
+    }
   },
+
   reducers: {
     isLoggingTask(state, action) {
       state.isLoggingTriggered = action.payload;
@@ -36,7 +46,26 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload.message;
         state.isAuthenticated = action.payload.success;
-      });
+      })
+      // ===================== SIGN UP OTP =====================
+      .addCase(signUpOtpReceived.pending, (state) => {
+        state.loading = true;
+        state.otp.sending = true;
+
+      })
+      .addCase(signUpOtpReceived.fulfilled, (state, action) => {
+        state.loading = false;
+        state.otp.sending = false;
+        state.otp.sent = action.payload.success;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(signUpOtpReceived.rejected, (state, action) => {
+        state.loading = false;
+        state.otp.sent = action.payload.success;
+        state.successMessage = null;
+        state.errorMessage = action.payload.success;
+      })
+
   },
 });
 
