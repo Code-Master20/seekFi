@@ -9,6 +9,8 @@ const isLoggingTriggered = JSON.parse(
   localStorage.getItem("isLoggingTriggered"),
 );
 
+const isOtpSent = JSON.parse(localStorage.getItem("otp-sent"));
+
 const authSlice = createSlice({
   name: "auth",
 
@@ -23,7 +25,7 @@ const authSlice = createSlice({
 
     otp: {
       sending: false,
-      sent: false,
+      sent: isOtpSent,
       verifying: false,
       verified: false,
     },

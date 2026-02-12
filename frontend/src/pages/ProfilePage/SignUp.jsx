@@ -39,6 +39,10 @@ export const SignUp = () => {
     }));
   };
 
+  const settingConstantToLocalStorage = () => {
+    localStorage.setItem("otp-sent", JSON.stringify(otp.sent));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
