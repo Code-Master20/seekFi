@@ -3,6 +3,7 @@ import styles from "./LogIn.module.css";
 import { useDispatch } from "react-redux";
 import { isLoggingTask } from "../../features/auth/authSlice";
 import { signUpOtpReceived } from "../../features/auth/authThunks";
+import otpVerify from "../../../../backend/middlewares/expressMiddleware/otpVerify.middleware";
 
 export const SignUp = () => {
   const [clientCredentials, setClientCredentials] = useState({
@@ -10,6 +11,17 @@ export const SignUp = () => {
     email: "",
     password: "",
   });
+
+  const {
+    user,
+    isAuthenticated,
+    isLoggingTriggered,
+    loading,
+    errorMessage,
+    successMessage,
+    otp,
+  } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   //from sign-up-page to log-in-page toggling
   const returnToLogIn = () => {
@@ -46,6 +58,8 @@ export const SignUp = () => {
       password: "",
     }));
   };
+
+  if (otp.sent) return <otpVerify />;
 
   return (
     <main className={styles["main-container-first"]}>

@@ -47,11 +47,11 @@ export const checkMe = createAsyncThunk("auth/isMe", async (_, thunkAPI) => {
   }
 });
 
+//==========================sending otp before sign-up verification=======================
 export const signUpOtpReceived = createAsyncThunk(
-  "auth/signUpOtp/",
+  "auth/signUpOtp",
   async (clientCredentials, thunkAPI) => {
     try {
-      console.log(clientCredentials);
       const response = await fetch(
         "https://seekfi.onrender.com/api/auth/sign-up",
         {
@@ -76,6 +76,36 @@ export const signUpOtpReceived = createAsyncThunk(
       return thunkAPI.fulfillWithValue(dataFromBackend);
     } catch (error) {
       console.log("500 fall back error from dataBase:", error);
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+
+//========================otp verify for successfull sign-up==============================
+export const otpVerifiedAndSignedUp = createAsyncThunk(
+  "auth/verifiedOtp",
+  async (clientCredentials, thunkAPI) => {
+    try {
+      const response = await fetch(
+        "https://seekfi.onrender.com/api/auth/sign-up/verify-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(clientCredentials),
+          credentials: "include",
+        },
+      );
+
+      const dataFromBackend = await response.json();
+
+      if (!response.ok) {
+        const brokenResponse = { ...dataFromBackend };
+        return thunkAPI.rejectWithValue(brokenResponse);
+      }
+      return thunkAPI.fulfillWithValue(dataFromBackend);
+    } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   },

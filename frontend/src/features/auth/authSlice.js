@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { checkMe, signUpOtpReceived } from "./authThunks";
+import {
+  checkMe,
+  signUpOtpReceived,
+  otpVerifiedAndSignedUp,
+} from "./authThunks";
 
 const isLoggingTriggered = JSON.parse(
   localStorage.getItem("isLoggingTriggered"),
@@ -21,7 +25,8 @@ const authSlice = createSlice({
       sending: false,
       sent: false,
       verifying: false,
-    }
+      verified: false,
+    },
   },
 
   reducers: {
@@ -51,7 +56,6 @@ const authSlice = createSlice({
       .addCase(signUpOtpReceived.pending, (state) => {
         state.loading = true;
         state.otp.sending = true;
-
       })
       .addCase(signUpOtpReceived.fulfilled, (state, action) => {
         state.loading = false;
@@ -66,6 +70,25 @@ const authSlice = createSlice({
         state.errorMessage = action.payload.success;
       })
 
+      // =====================VERIFY SIGN UP OTP AND AUTO SIGNED UP=====================
+      .addCase(otpVerifiedAndSignedUp.pending, (state, action) => {
+        state.loading = true;
+        state.verifying = true;
+      })
+      .addCase(otpVerifiedAndSignedUp.fulfilled, (state, action) => {
+        state.loading = false;
+        state.otp.verifying = false;
+        state.otp.verified = action.payload.success;
+        state.successMessage = action.payload.message;
+        state.user = action.payload.data;
+      })
+      .addCase(otpVerifiedAndSignedUp.rejected, (state, action) => {
+        state.loading = false;
+        state.otp.verifying = false;
+        state.otp.verified = action.payload.success;
+        state.successMessage = action.payload.success;
+        state.errorMessage = action.payload.message;
+      });
   },
 });
 
