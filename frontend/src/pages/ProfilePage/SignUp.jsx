@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./LogIn.module.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { isLoggingTask } from "../../features/auth/authSlice";
 import { signUpOtpReceived } from "../../features/auth/authThunks";
 import { OtpVerification } from "../../components/OtpVerification/OtpVerification";
