@@ -3,7 +3,7 @@ import styles from "./LogIn.module.css";
 import { useDispatch } from "react-redux";
 import { isLoggingTask } from "../../features/auth/authSlice";
 import { signUpOtpReceived } from "../../features/auth/authThunks";
-import otpVerify from "../../../../backend/middlewares/expressMiddleware/otpVerify.middleware";
+import { OtpVerification } from "../../components/OtpVerification/OtpVerification";
 
 export const SignUp = () => {
   const [clientCredentials, setClientCredentials] = useState({
@@ -59,7 +59,7 @@ export const SignUp = () => {
     }));
   };
 
-  if (otp.sent) return <otpVerify />;
+  if (otp.sent) return <OtpVerification />;
 
   return (
     <main className={styles["main-container-first"]}>
