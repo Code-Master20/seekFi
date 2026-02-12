@@ -47,30 +47,36 @@ export const checkMe = createAsyncThunk("auth/isMe", async (_, thunkAPI) => {
   }
 });
 
+export const signUpOtpReceived = createAsyncThunk(
+  "auth/signUpOtp/",
+  async (clientCredentials, thunkAPI) => {
+    try {
+      console.log(clientCredentials);
+      const response = await fetch(
+        "https://seekfi.onrender.com/api/auth/sign-up",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(clientCredentials),
+        },
+      );
 
-export const signUpOtpReceived = createAsyncThunk("auth/signUpOtp/", async (clientCredentials, thunkAPI) => {
-  try {
-    console.log(clientCredentials);
-    const response = await fetch("https://seekfi.onrender.com/api/auth/sign-up", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(clientCredentials),
-      credentials: "include", // ensures cookies are sent from client to backend
-    });
-
-    const dataFromBackend = await response.json();
-    if (!response.ok) {
-      const brokenResponse = { ...dataFromBackend };
-      console.log("zod failidation error with 400 status code:",brokenResponse);
-      return thunkAPI.rejectWithValue(brokenResponse)
-
+      const dataFromBackend = await response.json();
+      if (!response.ok) {
+        const brokenResponse = { ...dataFromBackend };
+        console.log(
+          "zod failidation error with 400 status code:",
+          brokenResponse,
+        );
+        return thunkAPI.rejectWithValue(brokenResponse);
+      }
+      console.log("success response from dataBase:", dataFromBackend);
+      return thunkAPI.fulfillWithValue(dataFromBackend);
+    } catch (error) {
+      console.log("500 fall back error from dataBase:", error);
+      return thunkAPI.rejectWithValue(error);
     }
-    console.log("success response from dataBase:", dataFromBackend)
-    return thunkAPI.fulfillWithValue(dataFromBackend);
-  } catch (error) {
-    console.log("500 fall back error from dataBase:",error)
-    return thunkAPI.rejectWithValue(error);
-  }
-})
+  },
+);
