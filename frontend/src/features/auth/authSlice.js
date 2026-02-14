@@ -5,35 +5,38 @@ import {
   otpVerifiedAndSignedUp,
 } from "./authThunks";
 
-const isLoggingTriggered = JSON.parse(
-  localStorage.getItem("isLoggingTriggered"),
-);
-
-const isOtpSent = JSON.parse(localStorage.getItem("otp-sent"));
+//===============================setting constants to localstorage for values' persistent=====================
+const localStorageData = JSON.parse(sessionStorage.getItem("authMode"));
+console.log(localStorageData);
 
 const authSlice = createSlice({
   name: "auth",
-
   initialState: {
-    user: null,
-    isAuthenticated: false,
-    isLoggingTriggered,
     loading: false,
-
+    isAuthenticated: false,
+    user: null,
+    isLogInTriggered: localStorageData
+      ? localStorageData.isLogInTriggered
+      : false,
+    isSignUpTriggered: localStorageData
+      ? localStorageData.isSignUpTriggered
+      : false,
     errorMessage: null,
     successMessage: null,
-
     otp: {
       sending: false,
-      sent: isOtpSent,
+      sent: false,
       verifying: false,
       verified: false,
     },
   },
 
   reducers: {
-    isLoggingTask(state, action) {
-      state.isLoggingTriggered = action.payload;
+    isLogInClicked(state, action) {
+      state.isLogInTriggered = action.payload;
+    },
+    isSignUpClicked(state, action) {
+      state.isSignUpTriggered = action.payload;
     },
   },
   //========================= hitting "xyz/api/auth/me" to see if user is already logged in =======================
@@ -41,18 +44,50 @@ const authSlice = createSlice({
     builder
       .addCase(checkMe.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
+
+      /* 
+        if isMiddleware trigger at 401 for token undefined then ,
+
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = action.payload.success; success:false
+        state.successMessage = action.payload.message;  message:"Not authenticated"
+      */
+      /*
+        if isMeMiddleware is passed and isMeController is triggered at 200 for token is valid, then,
+
+        state.loading = false;
+        state.user = action.payload.data;               data:{id, emaiil}
+        state.isAuthenticated = action.payload.success; success:true
+        state.successMessage = action.payload.message;  message:"Successfully Authenticated"
+      */
       .addCase(checkMe.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.data;
         state.isAuthenticated = action.payload.success;
-        state.error = null;
+        state.successMessage = action.payload.message;
       })
+      /*
+      if isMeMiddleware is triggered at 401 for token is expired then,
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = action.payload.success; success:false
+        state.errorMessage = action.payload.message;    message:"your data is mailformed, please log-in again"
+      */
+
+      /*
+        if isMiddleware is triggered at 500 for Internal server error during token validation, then,
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = action.payload.success;
+        state.errorMessage = action.payload.message;    message:"Internal Server Error, Please refresh or re-login"
+     */
       .addCase(checkMe.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message;
+        state.user = null;
         state.isAuthenticated = action.payload.success;
+        state.errorMessage = action.payload.message;
       })
       // ===================== SIGN UP OTP =====================
       .addCase(signUpOtpReceived.pending, (state) => {
@@ -62,14 +97,14 @@ const authSlice = createSlice({
       .addCase(signUpOtpReceived.fulfilled, (state, action) => {
         state.loading = false;
         state.otp.sending = false;
-        state.otp.sent = action.payload.success;
-        state.successMessage = action.payload.message;
+        state.otp.sent = action.payload.success; //success = true from backend
+        state.successMessage = action.payload.message; //message = "verification code sent to xyz@45gmail.com" from backend
       })
       .addCase(signUpOtpReceived.rejected, (state, action) => {
         state.loading = false;
-        state.otp.sent = action.payload.success;
+        state.otp.sent = action.payload.success; //success = false; from backend
         state.successMessage = null;
-        state.errorMessage = action.payload.success;
+        state.errorMessage = action.payload.success; //success = "failed to send verification code" from backend
       })
 
       // =====================VERIFY SIGN UP OTP AND AUTO SIGNED UP=====================
@@ -94,6 +129,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { isLoggingTask } = authSlice.actions;
+export const { isLogInClicked, isSignUpClicked } = authSlice.actions;
 
 export default authSlice.reducer;

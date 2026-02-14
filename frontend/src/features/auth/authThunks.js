@@ -1,17 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
+// http://localhost:5173
 //========================tracking if user is already logged in==========================
 export const checkMe = createAsyncThunk("auth/isMe", async (_, thunkAPI) => {
   try {
-    const response = await fetch("https://seekfi.onrender.com/api/auth/me", {
+    const response = await fetch(`https://seekfi.onrender.com/api/auth/me`, {
+      method: "GET",
+      // headers: {
+      //   "Content-Type": "application/json",
+      // },
       credentials: "include", // ensures cookies are sent
     });
 
     const decodedResponse = await response.json();
-    if (!response.ok) {
-      const brokenResponse = { ...decodedResponse };
-      return thunkAPI.rejectWithValue(brokenResponse);
-    }
     return decodedResponse;
     /*
      =========== From backend ===========:- 
@@ -53,7 +53,7 @@ export const signUpOtpReceived = createAsyncThunk(
   async (clientCredentials, thunkAPI) => {
     try {
       const response = await fetch(
-        "https://seekfi.onrender.com/api/auth/sign-up",
+        `https://seekfi.onrender.com/api/auth/sign-up`,
         {
           method: "POST",
           headers: {
@@ -87,7 +87,7 @@ export const otpVerifiedAndSignedUp = createAsyncThunk(
   async (clientCredentials, thunkAPI) => {
     try {
       const response = await fetch(
-        "https://seekfi.onrender.com/api/auth/sign-up/verify-otp",
+        `https://seekfi.onrender.com/api/auth/sign-up/verify-otp`,
         {
           method: "POST",
           headers: {

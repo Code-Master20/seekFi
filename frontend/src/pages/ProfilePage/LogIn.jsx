@@ -1,26 +1,38 @@
 import { useState } from "react";
 import styles from "./LogIn.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import { isLoggingTask } from "../../features/auth/authSlice";
+import { isLogInClicked, isSignUpClicked } from "../../features/auth/authSlice";
 
 export const LogIn = () => {
-  const [clientCredentials, setClientCredentials] = useState({
-    username:"",
-    email:"",
-    password:"",
-  });
+  //reading true boolean from isSignUpTrigged-variable with redux-toolkit (useSelector())
+  const { isSignUpTriggered, isLogInTriggered } = useSelector(
+    (state) => state.auth,
+  );
 
+  //assigning true boolean to isSignUpTriggered-variable through isSignUpClicked reducer's function
   const dispatch = useDispatch();
-
-
   const returnToSignUp = () => {
-    localStorage.setItem("isLoggingTriggered", JSON.stringify(false));
-    dispatch(isLoggingTask(false));
+    dispatch(isSignUpClicked(true));
+    dispatch(isLogInClicked(false));
+
+    sessionStorage.setItem(
+      "authMode",
+      JSON.stringify({
+        isLogInTriggered: false,
+        isSignUpTriggered: true,
+      }),
+    );
   };
+
+  const [clientCredentials, setClientCredentials] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
   const handleSumbit = (e) => {
     e.preventDefault();
-  }
+  };
 
   return (
     <main className={styles["main-container-first"]}>
@@ -51,7 +63,7 @@ export const LogIn = () => {
 
               <div className={styles["btn-container"]}>
                 <button type="submit">log-in</button>
-                <button type="button" onClick={returnToSignUp}>
+                <button type="button" onClick={() => returnToSignUp()}>
                   sign-up
                 </button>
               </div>

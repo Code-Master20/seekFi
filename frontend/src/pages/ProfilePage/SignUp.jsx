@@ -1,32 +1,40 @@
 import { useState } from "react";
 import styles from "./LogIn.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { isLoggingTask } from "../../features/auth/authSlice";
+import { isLogInClicked, isSignUpClicked } from "../../features/auth/authSlice";
 import { signUpOtpReceived } from "../../features/auth/authThunks";
 import { OtpVerification } from "../../components/OtpVerification/OtpVerification";
 
 export const SignUp = () => {
-  const [clientCredentials, setClientCredentials] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
-
+  const dispatch = useDispatch();
   const {
     user,
     isAuthenticated,
-    isLoggingTriggered,
+    isLogInTriggered,
+    isSignUpTriggered,
     loading,
     errorMessage,
     successMessage,
     otp,
   } = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
+  const [clientCredentials, setClientCredentials] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
   //from sign-up-page to log-in-page toggling
   const returnToLogIn = () => {
-    localStorage.setItem("isLoggingTriggered", JSON.stringify(true));
-    dispatch(isLoggingTask(true));
+    dispatch(isLogInClicked(true));
+    dispatch(isSignUpClicked(false));
+    sessionStorage.setItem(
+      "authMode",
+      JSON.stringify({
+        isLogInTriggered: true,
+        isSignUpTriggered: false,
+      }),
+    );
   };
 
   //receiving value from input-change field
@@ -39,13 +47,8 @@ export const SignUp = () => {
     }));
   };
 
-  const settingConstantToLocalStorage = () => {
-    localStorage.setItem("otp-sent", JSON.stringify(otp.sent));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
     // trimming inputs before sending to the thunk
     const { username, email, password } = clientCredentials;
     const trimedClientCredentials = {
@@ -63,7 +66,8 @@ export const SignUp = () => {
     }));
   };
 
-  if (otp.sent) return <OtpVerification />;
+  if (otp.sent === true && isSignUpTriggered === true)
+    return <OtpVerification />; //if otp sent true and isLOggingTriggered tre then run it during sign-up clicked
 
   return (
     <main className={styles["main-container-first"]}>
@@ -112,7 +116,7 @@ export const SignUp = () => {
 
               <div className={styles["btn-container"]}>
                 <button type="submit">sign-up</button>
-                <button type="button" onClick={returnToLogIn}>
+                <button type="button" onClick={() => returnToLogIn()}>
                   log-in
                 </button>
               </div>

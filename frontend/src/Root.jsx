@@ -15,19 +15,34 @@ export const Root = () => {
     dispatch(checkMe());
   }, [dispatch]);
 
-  const { loading, isAuthenticated, error, user } = useSelector((state) => {
-    return state.auth;
-  });
+  const {
+    loading,
+    isAuthenticated,
+    successMessage,
+    errorMessage,
+    user,
+    isLogInTriggered,
+    isSignUpTriggered,
+  } = useSelector((state) => state.auth);
 
-  const isLoggingTriggered = useSelector(
-    (state) => state.auth.isLoggingTriggered,
-  );
+  if (loading === true)
+    return (
+      <div className="first-loading-content">
+        <h1>checking if you are an existing user...</h1>
+      </div>
+    );
+  // console.log(!isAuthenticated);
+  if (isAuthenticated === false && isLogInTriggered === false) {
+    return <SignUp />;
+  }
 
-  if (loading)
-    return <div className="">checking if user already existed...</div>;
-
-  if (!isAuthenticated && isLoggingTriggered) return <LogIn />; //<OtpVerification />
-  if (!isLoggingTriggered) return <SignUp />;
+  if (
+    isAuthenticated === false &&
+    isLogInTriggered === true &&
+    isSignUpTriggered === false
+  ) {
+    return <LogIn />;
+  }
 
   return (
     <div className="root-container">
