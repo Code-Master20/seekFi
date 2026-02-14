@@ -1,8 +1,8 @@
-function ErrorHandler(statusCode, errorMessage) {
+function ErrorHandler(statusCode, message) {
   //constructor function
   this.success = false;
   this.statusCode = statusCode || 500;
-  this.message = errorMessage || "Something went wrong";
+  this.message = message || "Something went wrong";
 }
 
 ErrorHandler.prototype.send = function (res) {

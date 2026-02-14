@@ -1,14 +1,14 @@
-function SuccessHandler(statusCode, successMessage, data) {
+function SuccessHandler(statusCode, message, data) {
   this.success = true;
   this.statusCode = statusCode || 200;
-  this.successMessage = successMessage;
-  this.data = data || null; //intentionally defined data is empty that's why null
+  this.message = message;
+  this.data = data || null;
 }
 
 SuccessHandler.prototype.send = function (res) {
   return res.status(this.statusCode).json({
     success: this.success,
-    message: this.successMessage,
+    message: this.message,
     data: this.data,
   });
 };

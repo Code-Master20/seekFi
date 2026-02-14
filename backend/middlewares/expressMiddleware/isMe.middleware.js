@@ -12,14 +12,17 @@ const isMeMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_LOGGED_TRACK_SECRET_KEY);
 
     if (!decoded) {
-      return ErrorHandler(401, "session expired please log-in again").send(res);
+      return ErrorHandler(
+        401,
+        "your data is mailformed, please log-in again",
+      ).send(res);
     }
     req.user = decoded; // payload from JWT {only email, id}
     next();
   } catch (err) {
     return new ErrorHandler(
       500,
-      "Internal server Error. Please refresh or Log-in again ",
+      "Internal Server Error, Please refresh or re-login",
     ).send(res);
   }
 };
