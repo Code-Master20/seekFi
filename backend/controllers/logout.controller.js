@@ -4,8 +4,8 @@ const logOut = async (req, res, next) => {
   const isProd = process.env.NODE_ENV === "production";
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none", //"lax",
+    secure: false,
+    sameSite: "lax", //"none",
   });
 
   return new SuccessHandler(200, "Logged out successfully").send(res);

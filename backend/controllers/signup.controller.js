@@ -24,8 +24,8 @@ const signUp = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none", //"lax", // or "none" if frontend is on another domain.
+      secure: false,
+      sameSite: "lax", //"none", , // or "none" if frontend is on another domain.
       // you can use also "lax" if frontend is on localhost http.
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });

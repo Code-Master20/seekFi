@@ -1,7 +1,7 @@
 function ErrorHandler(statusCode, message) {
   //constructor function
-  this.success = false;
   this.statusCode = statusCode || 500;
+  this.success = false;
   this.message = message || "Something went wrong";
 }
 

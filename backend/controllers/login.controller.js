@@ -10,8 +10,8 @@ const logIn = async (req, res, _) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none", //"lax", // or "none" if frontend is on another domain
+      secure: false,
+      sameSite: "lax", // "none",  // or "none" if frontend is on another domain
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
