@@ -7,10 +7,10 @@ import { Outlet } from "react-router-dom";
 import { checkMe } from "./features/auth/authThunks";
 import { LogIn } from "./pages/ProfilePage/LogIn";
 import { SignUp } from "./pages/ProfilePage/SignUp";
-import { OtpVerification } from "./components/OtpVerification/OtpVerification";
 
 export const Root = () => {
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(checkMe());
   }, [dispatch]);
@@ -20,10 +20,11 @@ export const Root = () => {
     isAuthenticated,
     successMessage,
     errorMessage,
+    isLogInClicked,
     user,
-    isLogInTriggered,
-    isSignUpTriggered,
+    status,
   } = useSelector((state) => state.auth);
+  console.log(isLogInClicked);
 
   if (loading === true)
     return (
@@ -31,23 +32,28 @@ export const Root = () => {
         <h1>checking if you are an existing user...</h1>
       </div>
     );
-  // console.log(!isAuthenticated);
-  if (isAuthenticated === false && isLogInTriggered === false) {
-    return <SignUp />;
-  }
 
-  if (
-    isAuthenticated === false &&
-    isLogInTriggered === true &&
-    isSignUpTriggered === false
-  ) {
-    return <LogIn />;
-  }
+  if (isAuthenticated === false) {
+    // Backend decides first time view
+    if (status === 500) {
+      return isLogInClicked === false ? <LogIn /> : <SignUp />;
+    }
 
+    if (status === 401) {
+      return isLogInClicked === true ? <LogIn /> : <SignUp />;
+    }
+
+    // fallback
+    return isLogInClicked === true ? <LogIn /> : <SignUp />;
+  }
   return (
     <div className="root-container">
-      <HeaderOne />
-      <HeaderTwo />
+      {isAuthenticated === true && (
+        <>
+          <HeaderOne />
+          <HeaderTwo />
+        </>
+      )}
       <Outlet />
     </div>
   );

@@ -1,27 +1,18 @@
 import { useState } from "react";
 import styles from "./LogIn.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import { isLogInClicked, isSignUpClicked } from "../../features/auth/authSlice";
+import { isLogInClickedFun } from "../../features/auth/authSlice";
 
 export const LogIn = () => {
   //reading true boolean from isSignUpTrigged-variable with redux-toolkit (useSelector())
-  const { isSignUpTriggered, isLogInTriggered } = useSelector(
-    (state) => state.auth,
-  );
+  // const { isLogInClicked } = useSelector((state) => state.auth);
 
   //assigning true boolean to isSignUpTriggered-variable through isSignUpClicked reducer's function
   const dispatch = useDispatch();
-  const returnToSignUp = () => {
-    dispatch(isSignUpClicked(true));
-    dispatch(isLogInClicked(false));
 
-    sessionStorage.setItem(
-      "authMode",
-      JSON.stringify({
-        isLogInTriggered: false,
-        isSignUpTriggered: true,
-      }),
-    );
+  const returnToSignUp = () => {
+    dispatch(isLogInClickedFun(false));
+    sessionStorage.setItem("isLogInClicked", JSON.stringify(false));
   };
 
   const [clientCredentials, setClientCredentials] = useState({
@@ -63,7 +54,7 @@ export const LogIn = () => {
 
               <div className={styles["btn-container"]}>
                 <button type="submit">log-in</button>
-                <button type="button" onClick={() => returnToSignUp()}>
+                <button type="button" onClick={returnToSignUp}>
                   sign-up
                 </button>
               </div>
