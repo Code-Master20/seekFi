@@ -10,11 +10,12 @@ const passResetRoute = require("./routers/resetPass.router");
 const meRoute = require("./routers/me.router");
 const cors = require("cors");
 const app = express();
+const isProd = process.env.NODE_ENV === "production";
 
 const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URI,
+  origin: isProd ? process.env.FRONTEND_URI : process.env.FRONTEND_URI_LOCAL,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
   credentials: true,
 };

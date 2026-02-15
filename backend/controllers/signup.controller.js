@@ -22,11 +22,11 @@ const signUp = async (req, res) => {
     await TemporaryUser.deleteMany({ email });
     const token = userCreated.generateLogTrackTkn();
 
+    const isProd = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax", //"none", , // or "none" if frontend is on another domain.
-      // you can use also "lax" if frontend is on localhost http.
+      secure: isProd ? true : false,
+      sameSite: isProd ? "none" : "lax", // "lax" if prontend and backend are on same domain you can use "lax" or "strict"
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 

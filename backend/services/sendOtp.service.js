@@ -1,6 +1,6 @@
 // services/sendOtp.service.js
 const EmailOtp = require("../models/emailOtp.model");
-// const nodeMailerEmailService = require("../utils/nodeMailerEmailService.util");
+const nodeMailerEmailService = require("../utils/nodeMailerEmailService.util");
 const sendGmailApiEmail = require("../utils/sendGmailApiEmail.util");
 
 const sendOtp = async ({ email, purpose }) => {
@@ -17,17 +17,20 @@ const sendOtp = async ({ email, purpose }) => {
     otp,
     purpose,
   });
+  const isProd = process.env.NODE_ENV === "production";
 
-  /*await nodeMailerEmailService({
-    to: email,
-    subject: "Email verification code",
-    text: `Welcome to the world of ClassMate`,
-    html: `
+  //this is I am using only for localHost texting email services
+  if (!isProd) {
+    await nodeMailerEmailService({
+      to: email,
+      subject: "Email verification code",
+      text: `Welcome to the world of ClassMate`,
+      html: `
       <h3>Your verification code</h3>
       <p><b>${otp}</b></p>
     `,
-  });
-  */
+    });
+  }
 
   await sendGmailApiEmail({
     to: email,
