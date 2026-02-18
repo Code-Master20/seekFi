@@ -12,7 +12,7 @@ export const LogIn = () => {
 
   const returnToSignUp = () => {
     dispatch(isLogInClickedFun(false));
-    sessionStorage.setItem("isLogInClicked", JSON.stringify(false));
+    localStorage.setItem("isLogInClicked", JSON.stringify(false));
   };
 
   const [clientCredentials, setClientCredentials] = useState({

@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./LogIn.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { isLogInClickedFun } from "../../features/auth/authSlice";
+import { isLogInClickedFun, isOtpSent } from "../../features/auth/authSlice";
 import { signUpOtpReceived } from "../../features/auth/authThunks";
 import { OtpVerification } from "../../components/OtpVerification/OtpVerification";
+import { InvalidInputTracker } from "../../components/InvalidInputTracker/InvalidInputTracker";
 
 export const SignUp = () => {
+  const [storedOtp, setStoredOtp] = useState(false);
+  const [storedAuthentication, setStoredAuthentication] = useState(false);
   const dispatch = useDispatch();
   const {
     user,
@@ -15,6 +18,7 @@ export const SignUp = () => {
     errorMessage,
     successMessage,
     status,
+    success,
     otp,
   } = useSelector((state) => state.auth);
 
@@ -28,7 +32,7 @@ export const SignUp = () => {
 
   const returnToLogIn = () => {
     dispatch(isLogInClickedFun(true));
-    sessionStorage.setItem("isLogInClicked", JSON.stringify(true));
+    localStorage.setItem("isLogInClicked", JSON.stringify(true));
   };
 
   //receiving value from input-change field
@@ -52,7 +56,6 @@ export const SignUp = () => {
       password: password.trim(),
     };
     dispatch(signUpOtpReceived(trimedClientCredentials)); //sending clientCredentials to thunk for sending request to the database with these credentials
-
     setClientCredentials((prev) => ({
       ...prev,
       username: "",
@@ -61,7 +64,18 @@ export const SignUp = () => {
     }));
   };
 
-  if (otp.sent === true) return <OtpVerification />; //if otp sent true and isLOggingTriggered tre then run it during sign-up clicked
+  useEffect(() => {
+    setStoredOtp(JSON.parse(localStorage.getItem("otp-sent")));
+    setStoredAuthentication(
+      JSON.parse(localStorage.getItem("isAuthenticated")),
+    );
+  }, [otp.sent, storedOtp, storedAuthentication]);
+
+  if (
+    (otp.sent === true || storedOtp === true) &&
+    (isAuthenticated === false || storedAuthentication === false)
+  )
+    return <OtpVerification purpose="signup" />; //if otp sent true and isLOggingTriggered tre then run it during sign-up clicked
   return (
     <main className={styles["main-container-first"]}>
       <section className={styles["main-container-second"]}>
@@ -79,6 +93,7 @@ export const SignUp = () => {
                   value={clientCredentials.username}
                   onChange={handleOnChange}
                 />
+                {/* {success === false && <InvalidInputTracker />} */}
               </div>
 
               {/* Email */}
@@ -86,12 +101,13 @@ export const SignUp = () => {
                 <label htmlFor="email">Email :</label>
                 <input
                   id="email"
-                  type="email"
+                  type="text"
                   name="email"
                   placeholder="your email"
                   value={clientCredentials.email}
                   onChange={handleOnChange}
                 />
+                {/* {success === false && <InvalidInputTracker />} */}
               </div>
 
               {/* Password */}
@@ -105,6 +121,7 @@ export const SignUp = () => {
                   value={clientCredentials.password}
                   onChange={handleOnChange}
                 />
+                {/* {success === false && <InvalidInputTracker />} */}
               </div>
 
               <div className={styles["btn-container"]}>

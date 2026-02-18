@@ -1,5 +1,5 @@
 import "./Root.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { HeaderOne } from "./components/Header/HeaderOne";
 import { HeaderTwo } from "./components/Header/HeaderTwo";
@@ -11,20 +11,12 @@ import { SignUp } from "./pages/ProfilePage/SignUp";
 export const Root = () => {
   const dispatch = useDispatch();
 
+  const { loading, isAuthenticated, isLogInClicked } = useSelector(
+    (state) => state.auth,
+  );
   useEffect(() => {
     dispatch(checkMe());
   }, [dispatch]);
-
-  const {
-    loading,
-    isAuthenticated,
-    successMessage,
-    errorMessage,
-    isLogInClicked,
-    user,
-    status,
-  } = useSelector((state) => state.auth);
-  console.log(isLogInClicked);
 
   if (loading === true)
     return (
@@ -34,26 +26,13 @@ export const Root = () => {
     );
 
   if (isAuthenticated === false) {
-    // Backend decides first time view
-    if (status === 500) {
-      return isLogInClicked === false ? <LogIn /> : <SignUp />;
-    }
-
-    if (status === 401) {
-      return isLogInClicked === true ? <LogIn /> : <SignUp />;
-    }
-
-    // fallback
-    return isLogInClicked === true ? <LogIn /> : <SignUp />;
+    return isLogInClicked ? <LogIn /> : <SignUp />;
   }
+
   return (
     <div className="root-container">
-      {isAuthenticated === true && (
-        <>
-          <HeaderOne />
-          <HeaderTwo />
-        </>
-      )}
+      <HeaderOne />
+      <HeaderTwo />
       <Outlet />
     </div>
   );

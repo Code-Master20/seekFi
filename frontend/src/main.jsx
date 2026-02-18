@@ -27,8 +27,12 @@ import { ProtectedRoute } from "./features/ProtectedRoute.jsx";
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
-      <Route index element={<LogIn />}></Route>
-      <Route index element={<SignUp />}></Route>
+      {/* Public routes */}
+      <Route index element={<LogIn />} />
+      <Route path="signup" element={<SignUp />} />
+      <Route path="verify-otp" element={<OtpVerification />} />
+
+      {/* Protected routes */}
       <Route
         path="home-feed"
         element={
@@ -36,7 +40,7 @@ const Router = createBrowserRouter(
             <HomeFeed />
           </ProtectedRoute>
         }
-      ></Route>
+      />
       <Route
         path="video-feed"
         element={
@@ -44,7 +48,7 @@ const Router = createBrowserRouter(
             <VideoFeed />
           </ProtectedRoute>
         }
-      ></Route>
+      />
       <Route
         path="photo-feed"
         element={
@@ -52,7 +56,7 @@ const Router = createBrowserRouter(
             <PhotoFeed />
           </ProtectedRoute>
         }
-      ></Route>
+      />
       <Route
         path="post-feed"
         element={
@@ -60,7 +64,7 @@ const Router = createBrowserRouter(
             <PostFeed />
           </ProtectedRoute>
         }
-      ></Route>
+      />
       <Route
         path="people"
         element={
@@ -68,7 +72,7 @@ const Router = createBrowserRouter(
             <PeopleHub />
           </ProtectedRoute>
         }
-      ></Route>
+      />
       <Route
         path="notifications"
         element={
@@ -76,8 +80,15 @@ const Router = createBrowserRouter(
             <NotificationCenter />
           </ProtectedRoute>
         }
-      ></Route>
-      <Route path="profile" element={<Profile />}></Route>
+      />
+      <Route
+        path="profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
     </Route>,
   ),
 );
