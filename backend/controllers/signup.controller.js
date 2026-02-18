@@ -5,7 +5,7 @@ const ErrorHandler = require("../utils/errorHandler.util");
 
 const signUp = async (req, res) => {
   try {
-    const { username, email, password } = req.tempUser;
+    const { username, email, password } = req.user;
 
     const userExist = await User.findOne({ email });
 

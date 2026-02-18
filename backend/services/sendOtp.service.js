@@ -17,6 +17,7 @@ const sendOtp = async ({ email, purpose }) => {
     otp,
     purpose,
   });
+
   const isProd = process.env.NODE_ENV === "production";
 
   //this is I am using only for localHost texting email services
@@ -30,16 +31,16 @@ const sendOtp = async ({ email, purpose }) => {
       <p><b>${otp}</b></p>
     `,
     });
-  }
-
-  await sendGmailApiEmail({
-    to: email,
-    subject: "Email Verification Code",
-    html: `
+  } else {
+    await sendGmailApiEmail({
+      to: email,
+      subject: "Email Verification Code",
+      html: `
     <h2>Your verification Code</h2>
     <p><b>${otp}</b></p>
   `,
-  });
+    });
+  }
 };
 
 module.exports = sendOtp;

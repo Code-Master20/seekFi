@@ -23,10 +23,9 @@ const sendingOtpForSignUp = async (req, res) => {
       email,
       purpose: "signup",
     });
-
-    return new SuccessHandler(200, `verification code sent to ${email}`).send(
-      res,
-    );
+    return new SuccessHandler(200, `verification code sent to ${email}`, {
+      email,
+    }).send(res);
   } catch (error) {
     return new ErrorHandler(500, "failed to send verification code")
       .log("sending otp for sign up error", error)

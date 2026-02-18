@@ -41,13 +41,13 @@ const otpVerify = async (req, res, next) => {
       }
 
       return new ErrorHandler(400, "Invalid OTP")
-        .log("otp validation", "to many attempts with invalid otp")
+        .log("otp validation", "Invalid Otp is entered")
         .send(res);
     }
 
     if (purpose === "signup") {
-      const tempUser = await TemporaryUser.findOne({ email });
-      if (!tempUser) {
+      const user = await TemporaryUser.findOne({ email });
+      if (!user) {
         return new ErrorHandler(
           410,
           "Signup session expired. Please try signing up again.",
@@ -56,7 +56,7 @@ const otpVerify = async (req, res, next) => {
           .send(res);
       }
 
-      req.tempUser = tempUser;
+      req.user = user;
     }
 
     if (purpose === "login") {
