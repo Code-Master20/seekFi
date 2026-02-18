@@ -21,14 +21,15 @@ import { LogIn } from "./pages/ProfilePage/LogIn.jsx";
 import { SignUp } from "./pages/ProfilePage/SignUp.jsx";
 import { OtpVerification } from "./components/OtpVerification/OtpVerification.jsx";
 import { isAuthenticationChecked } from "./features/auth/authSlice.js";
+import { Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./features/ProtectedRoute.jsx";
 
 //creating routes for different pages
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
-      {/* Public routes */}
-      <Route index element={<LogIn />} />
+      <Route index element={<Navigate to="/login" replace />} />
+      <Route path="login" element={<LogIn />} />
       <Route path="signup" element={<SignUp />} />
       <Route path="verify-otp" element={<OtpVerification />} />
 

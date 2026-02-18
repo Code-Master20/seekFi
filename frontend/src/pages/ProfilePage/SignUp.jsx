@@ -1,26 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./LogIn.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { isLogInClickedFun, isOtpSent } from "../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 import { signUpOtpReceived } from "../../features/auth/authThunks";
-import { OtpVerification } from "../../components/OtpVerification/OtpVerification";
-import { InvalidInputTracker } from "../../components/InvalidInputTracker/InvalidInputTracker";
 
 export const SignUp = () => {
-  const [storedOtp, setStoredOtp] = useState(false);
-  const [storedAuthentication, setStoredAuthentication] = useState(false);
   const dispatch = useDispatch();
-  const {
-    user,
-    isAuthenticated,
-    isLogInClicked,
-    loading,
-    errorMessage,
-    successMessage,
-    status,
-    success,
-    otp,
-  } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const { otp } = useSelector((state) => state.auth);
 
   const [clientCredentials, setClientCredentials] = useState({
     username: "",
@@ -28,16 +16,7 @@ export const SignUp = () => {
     password: "",
   });
 
-  //from sign-up-page to log-in-page toggling
-
-  const returnToLogIn = () => {
-    dispatch(isLogInClickedFun(true));
-    localStorage.setItem("isLogInClicked", JSON.stringify(true));
-  };
-
-  //receiving value from input-change field
   const handleOnChange = (e) => {
-    // console.log(e.target)
     const { name, value } = e.target;
     setClientCredentials((prev) => ({
       ...prev,
@@ -47,35 +26,23 @@ export const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // trimming inputs before sending to the thunk
-    const { username, email, password } = clientCredentials;
+
     const trimedClientCredentials = {
-      ...clientCredentials,
-      username: username.trim(),
-      email: email.trim(),
-      password: password.trim(),
+      username: clientCredentials.username.trim(),
+      email: clientCredentials.email.trim(),
+      password: clientCredentials.password.trim(),
     };
-    dispatch(signUpOtpReceived(trimedClientCredentials)); //sending clientCredentials to thunk for sending request to the database with these credentials
-    setClientCredentials((prev) => ({
-      ...prev,
-      username: "",
-      email: "",
-      password: "",
-    }));
+
+    dispatch(signUpOtpReceived(trimedClientCredentials));
   };
 
+  // ✅ navigate to otp page after otp sent
   useEffect(() => {
-    setStoredOtp(JSON.parse(localStorage.getItem("otp-sent")));
-    setStoredAuthentication(
-      JSON.parse(localStorage.getItem("isAuthenticated")),
-    );
-  }, [otp.sent, storedOtp, storedAuthentication]);
+    if (otp.sent) {
+      navigate("/verify-otp");
+    }
+  }, [otp.sent, navigate]);
 
-  if (
-    (otp.sent === true || storedOtp === true) &&
-    (isAuthenticated === false || storedAuthentication === false)
-  )
-    return <OtpVerification purpose="signup" />; //if otp sent true and isLOggingTriggered tre then run it during sign-up clicked
   return (
     <main className={styles["main-container-first"]}>
       <section className={styles["main-container-second"]}>
@@ -93,10 +60,8 @@ export const SignUp = () => {
                   value={clientCredentials.username}
                   onChange={handleOnChange}
                 />
-                {/* {success === false && <InvalidInputTracker />} */}
               </div>
 
-              {/* Email */}
               <div className={styles["input-elm"]}>
                 <label htmlFor="email">Email :</label>
                 <input
@@ -107,10 +72,8 @@ export const SignUp = () => {
                   value={clientCredentials.email}
                   onChange={handleOnChange}
                 />
-                {/* {success === false && <InvalidInputTracker />} */}
               </div>
 
-              {/* Password */}
               <div className={styles["input-elm"]}>
                 <label htmlFor="password">Password :</label>
                 <input
@@ -121,12 +84,11 @@ export const SignUp = () => {
                   value={clientCredentials.password}
                   onChange={handleOnChange}
                 />
-                {/* {success === false && <InvalidInputTracker />} */}
               </div>
 
               <div className={styles["btn-container"]}>
                 <button type="submit">sign-up</button>
-                <button type="button" onClick={returnToLogIn}>
+                <button type="button" onClick={() => navigate("/login")}>
                   log-in
                 </button>
               </div>

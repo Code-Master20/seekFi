@@ -39,7 +39,9 @@ export const signUpOtpReceived = createAsyncThunk(
   "auth/signUpOtp",
   async (clientCredentials, thunkAPI) => {
     try {
-      const response = await api.post("/api/auth/sign-up", clientCredentials);
+      const response = await api.post("/api/auth/sign-up", clientCredentials, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       let brokenResponse = {

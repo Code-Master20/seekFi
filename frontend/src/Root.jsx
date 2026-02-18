@@ -10,29 +10,28 @@ import { SignUp } from "./pages/ProfilePage/SignUp";
 
 export const Root = () => {
   const dispatch = useDispatch();
+  const { loading, isAuthenticated } = useSelector((state) => state.auth);
 
-  const { loading, isAuthenticated, isLogInClicked } = useSelector(
-    (state) => state.auth,
-  );
   useEffect(() => {
     dispatch(checkMe());
   }, [dispatch]);
 
-  if (loading === true)
+  if (loading) {
     return (
       <div className="first-loading-content">
         <h1>checking if you are an existing user...</h1>
       </div>
     );
-
-  if (isAuthenticated === false) {
-    return isLogInClicked ? <LogIn /> : <SignUp />;
   }
 
   return (
     <div className="root-container">
-      <HeaderOne />
-      <HeaderTwo />
+      {isAuthenticated && (
+        <>
+          <HeaderOne />
+          <HeaderTwo />
+        </>
+      )}
       <Outlet />
     </div>
   );

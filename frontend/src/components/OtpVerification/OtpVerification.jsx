@@ -2,47 +2,38 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../pages/ProfilePage/LogIn.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  isUserReceived,
-  isAuthenticationChecked,
-} from "../../features/auth/authSlice";
 import { otpVerifiedAndSignedUp } from "../../features/auth/authThunks";
 
-export const OtpVerification = ({ purpose }) => {
+export const OtpVerification = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  const storedIsAuthenticated = JSON.parse(
-    localStorage.getItem("isAuthenticated"),
-  );
+
   const [clientCredentials, setClientCredentials] = useState({
     email: user?.email || storedUser?.email || "",
     otp: "",
-    purpose,
+    purpose: "signup",
   });
 
+  useEffect(() => {
+    if (user?.email) {
+      setClientCredentials((prev) => ({
+        ...prev,
+        email: user.email,
+      }));
+    }
+  }, [user]);
+
   const handleOnChange = (e) => {
-    let { name, value } = e.target;
+    const { name, value } = e.target;
     setClientCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    /*
-    dispatch({
-  type: "auth/otpVerify",
-  payload: clientCredentials
-});
-*/
     dispatch(otpVerifiedAndSignedUp(clientCredentials));
-
-    setClientCredentials((prev) => ({
-      ...prev,
-      email: "",
-      opt: "",
-    }));
   };
 
   useEffect(() => {
@@ -63,7 +54,7 @@ export const OtpVerification = ({ purpose }) => {
                   <label htmlFor="email">Email :</label>
                   <input
                     id="email"
-                    type="email"
+                    type="text"
                     name="email"
                     placeholder="your email"
                     value={clientCredentials.email}
@@ -75,7 +66,7 @@ export const OtpVerification = ({ purpose }) => {
                   <label htmlFor="otp">Otp :</label>
                   <input
                     id="otp"
-                    type="string"
+                    type="text"
                     name="otp"
                     placeholder="Enter verification code"
                     value={clientCredentials.otp}

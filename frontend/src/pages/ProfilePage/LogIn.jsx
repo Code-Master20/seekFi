@@ -1,28 +1,18 @@
 import { useState } from "react";
 import styles from "./LogIn.module.css";
-import { useSelector, useDispatch } from "react-redux";
-import { isLogInClickedFun } from "../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export const LogIn = () => {
-  //reading true boolean from isSignUpTrigged-variable with redux-toolkit (useSelector())
-  // const { isLogInClicked } = useSelector((state) => state.auth);
-
-  //assigning true boolean to isSignUpTriggered-variable through isSignUpClicked reducer's function
-  const dispatch = useDispatch();
-
-  const returnToSignUp = () => {
-    dispatch(isLogInClickedFun(false));
-    localStorage.setItem("isLogInClicked", JSON.stringify(false));
-  };
+  const navigate = useNavigate();
 
   const [clientCredentials, setClientCredentials] = useState({
-    username: "",
     email: "",
     password: "",
   });
 
-  const handleSumbit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    // dispatch login thunk here later
   };
 
   return (
@@ -31,7 +21,7 @@ export const LogIn = () => {
         <article className={styles["main-container-third"]}>
           <h1 className={styles["login-main-heading"]}>please log in first</h1>
           <div className={styles["login-form-container"]}>
-            <form onSubmit={handleSumbit} autoComplete="off">
+            <form onSubmit={handleSubmit} autoComplete="off">
               <div className={styles["input-elm"]}>
                 <label htmlFor="email">Email :</label>
                 <input
@@ -54,7 +44,7 @@ export const LogIn = () => {
 
               <div className={styles["btn-container"]}>
                 <button type="submit">log-in</button>
-                <button type="button" onClick={returnToSignUp}>
+                <button type="button" onClick={() => navigate("/signup")}>
                   sign-up
                 </button>
               </div>
