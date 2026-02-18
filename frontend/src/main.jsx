@@ -20,74 +20,97 @@ import { Profile } from "./pages/ProfilePage/Profile.jsx";
 import { LogIn } from "./pages/ProfilePage/LogIn.jsx";
 import { SignUp } from "./pages/ProfilePage/SignUp.jsx";
 import { OtpVerification } from "./components/OtpVerification/OtpVerification.jsx";
-import { isAuthenticationChecked } from "./features/auth/authSlice.js";
 import { Navigate } from "react-router-dom";
-import { ProtectedRoute } from "./features/ProtectedRoute.jsx";
+import { PrivateRoute } from "./features/PrivateRoute.jsx";
+import { PublicRoute } from "./features/PublicRoute.jsx";
 
 //creating routes for different pages
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
       <Route index element={<Navigate to="/login" replace />} />
-      <Route path="login" element={<LogIn />} />
-      <Route path="signup" element={<SignUp />} />
-      <Route path="verify-otp" element={<OtpVerification />} />
+      <Route
+        path="login"
+        element={
+          <PublicRoute>
+            <LogIn />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path="signup"
+        element={
+          <PublicRoute>
+            <SignUp />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path="verify-otp"
+        element={
+          <PublicRoute>
+            <OtpVerification />
+          </PublicRoute>
+        }
+      />
 
       {/* Protected routes */}
       <Route
         path="home-feed"
         element={
-          <ProtectedRoute>
+          <PrivateRoute>
             <HomeFeed />
-          </ProtectedRoute>
+          </PrivateRoute>
         }
       />
       <Route
         path="video-feed"
         element={
-          <ProtectedRoute>
+          <PrivateRoute>
             <VideoFeed />
-          </ProtectedRoute>
+          </PrivateRoute>
         }
       />
       <Route
         path="photo-feed"
         element={
-          <ProtectedRoute>
+          <PrivateRoute>
             <PhotoFeed />
-          </ProtectedRoute>
+          </PrivateRoute>
         }
       />
       <Route
         path="post-feed"
         element={
-          <ProtectedRoute>
+          <PrivateRoute>
             <PostFeed />
-          </ProtectedRoute>
+          </PrivateRoute>
         }
       />
       <Route
         path="people"
         element={
-          <ProtectedRoute>
+          <PrivateRoute>
             <PeopleHub />
-          </ProtectedRoute>
+          </PrivateRoute>
         }
       />
       <Route
         path="notifications"
         element={
-          <ProtectedRoute>
+          <PrivateRoute>
             <NotificationCenter />
-          </ProtectedRoute>
+          </PrivateRoute>
         }
       />
       <Route
         path="profile"
         element={
-          <ProtectedRoute>
+          <PrivateRoute>
             <Profile />
-          </ProtectedRoute>
+          </PrivateRoute>
         }
       />
     </Route>,
