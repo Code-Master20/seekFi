@@ -3,7 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 //========================tracking if user is already logged in==========================
 export const checkMe = createAsyncThunk("auth/isMe", async (_, thunkAPI) => {
   try {
-    const response = await api.get("/api/auth/me", {
+    const response = await api.get("/auth/me", {
       withCredentials: true,
     });
     return response.data;
@@ -39,7 +39,7 @@ export const signUpOtpReceived = createAsyncThunk(
   "auth/signUpOtp",
   async (clientCredentials, thunkAPI) => {
     try {
-      const response = await api.post("/api/auth/sign-up", clientCredentials, {
+      const response = await api.post("/auth/sign-up", clientCredentials, {
         withCredentials: true,
       });
       return response.data;
@@ -67,7 +67,7 @@ export const otpVerifiedAndSignedUp = createAsyncThunk(
   async (clientCredentials, thunkAPI) => {
     try {
       const response = await api.post(
-        "/api/auth/sign-up/verify-otp",
+        "/auth/sign-up/verify-otp",
         clientCredentials,
         {
           withCredentials: true,
