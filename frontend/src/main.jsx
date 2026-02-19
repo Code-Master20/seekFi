@@ -28,7 +28,7 @@ import { PublicRoute } from "./features/PublicRoute.jsx";
 const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
-      {/* <Route index element={<Navigate to="/login" replace />} /> */}
+      <Route index element={<Navigate to="/login" replace />} />
       <Route
         path="login"
         element={

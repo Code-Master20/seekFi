@@ -5,8 +5,6 @@ import { HeaderOne } from "./components/Header/HeaderOne";
 import { HeaderTwo } from "./components/Header/HeaderTwo";
 import { Outlet } from "react-router-dom";
 import { checkMe } from "./features/auth/authThunks";
-import { LogIn } from "./pages/ProfilePage/LogIn";
-import { SignUp } from "./pages/ProfilePage/SignUp";
 
 export const Root = () => {
   const dispatch = useDispatch();
