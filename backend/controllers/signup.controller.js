@@ -27,8 +27,6 @@ const signUp = async (req, res) => {
       httpOnly: true,
       secure: isProd ? true : false,
       sameSite: isProd ? "none" : "lax", // "lax" if prontend and backend are on same domain you can use "lax" or "strict"
-      domain: ".onrender.com", // 🔥 ADD THIS
-      path: "/",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 

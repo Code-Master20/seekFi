@@ -12,8 +12,6 @@ const logIn = async (req, res, _) => {
       httpOnly: true,
       secure: isProd ? true : false,
       sameSite: isProd ? "none" : "lax", //"none",if frontend is on another domain
-      domain: ".onrender.com", // 🔥 ADD THIS
-      path: "/",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 

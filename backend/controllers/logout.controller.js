@@ -7,8 +7,6 @@ const logOut = async (req, res, next) => {
     httpOnly: true,
     secure: isProd ? true : false,
     sameSite: isProd ? "none" : "lax",
-    domain: ".onrender.com", // 🔥 ADD THIS
-    path: "/",
   });
 
   return new SuccessHandler(200, "Logged out successfully").send(res);
