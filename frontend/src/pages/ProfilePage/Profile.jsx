@@ -31,7 +31,7 @@ export const Profile = () => {
               src={profilePic}
               alt=""
               className={styles["profile-pic"]}
-              height="90px"
+              height={width - 270}
             />
           </div>
         </article>
