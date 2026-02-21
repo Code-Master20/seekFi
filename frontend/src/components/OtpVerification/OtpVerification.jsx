@@ -2,19 +2,23 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../pages/ProfilePage/LogIn.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { otpVerifiedAndSignedUp } from "../../features/auth/authThunks";
+import {
+  otpVerifiedAndLoggedIn,
+  otpVerifiedAndSignedUp,
+} from "../../features/auth/authThunks";
 
 export const OtpVerification = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, purpose } = useSelector((state) => state.auth);
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedPurpose = JSON.parse(localStorage.getItem("purpose"));
 
   const [clientCredentials, setClientCredentials] = useState({
     email: user?.email || storedUser?.email || "",
     otp: "",
-    purpose: "signup",
+    purpose: storedPurpose ? storedPurpose : purpose,
   });
 
   useEffect(() => {
@@ -33,7 +37,13 @@ export const OtpVerification = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(otpVerifiedAndSignedUp(clientCredentials));
+
+    if (purpose === "signup" || storedPurpose === "signup") {
+      dispatch(otpVerifiedAndSignedUp(clientCredentials));
+    }
+    if (purpose === "login" || storedPurpose === "login") {
+      dispatch(otpVerifiedAndLoggedIn(clientCredentials));
+    }
   };
 
   useEffect(() => {

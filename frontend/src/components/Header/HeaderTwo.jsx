@@ -8,9 +8,12 @@ import { TfiBarChart } from "react-icons/tfi";
 import { NavLink } from "react-router-dom";
 import profilePic from "../../assets/profilePic.jpg";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export const HeaderTwo = () => {
-  // const [isActive, setActive] = useState("");
+  const { user } = useSelector((state) => state.auth);
+  // console.log(user);
+
   return (
     <header className={styles["header-container"]}>
       <nav className={styles["header-first-child"]}>

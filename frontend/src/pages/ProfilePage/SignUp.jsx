@@ -28,8 +28,8 @@ export const SignUp = () => {
     e.preventDefault();
 
     const trimedClientCredentials = {
-      username: clientCredentials.username.trim(),
-      email: clientCredentials.email.trim(),
+      username: clientCredentials.username.trim().toLowerCase(),
+      email: clientCredentials.email.trim().toLowerCase(),
       password: clientCredentials.password.trim(),
     };
 

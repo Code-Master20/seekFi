@@ -34,7 +34,7 @@ export const checkMe = createAsyncThunk("auth/isMe", async (_, thunkAPI) => {
 
 //==========================sending otp before sign-up verification=======================
 export const signUpOtpReceived = createAsyncThunk(
-  "auth/signUpOtp",
+  "auth/sign-up-otp",
   async (clientCredentials, thunkAPI) => {
     try {
       const response = await api.post("/auth/sign-up", clientCredentials);
@@ -59,7 +59,7 @@ export const signUpOtpReceived = createAsyncThunk(
 
 //========================otp verify for successfull sign-up==============================
 export const otpVerifiedAndSignedUp = createAsyncThunk(
-  "auth/verifiedOtp",
+  "auth/verify-sign-up-otp",
   async (clientCredentials, thunkAPI) => {
     try {
       const response = await api.post(
@@ -82,6 +82,59 @@ export const otpVerifiedAndSignedUp = createAsyncThunk(
       brokenResponse.success = success;
       brokenResponse.message = message;
 
+      return thunkAPI.rejectWithValue(brokenResponse);
+    }
+  },
+);
+
+export const logInOtpReceived = createAsyncThunk(
+  "auth/log-in-otp",
+  async (clientCredentials, thunkAPI) => {
+    try {
+      const response = await api.post("/auth/log-in", clientCredentials);
+      return response.data;
+    } catch (error) {
+      let brokenResponse = {
+        status: null,
+        message: "",
+        success: null,
+      };
+
+      const { message, success } = await error.response.data;
+      const { status } = await error.response;
+
+      brokenResponse.message = message;
+      brokenResponse.success = success;
+      brokenResponse.status = status;
+      console.log(brokenResponse);
+
+      return thunkAPI.rejectWithValue(brokenResponse);
+    }
+  },
+);
+
+export const otpVerifiedAndLoggedIn = createAsyncThunk(
+  "auth/verify-log-in-otp",
+  async (clientCredentials, thunkAPI) => {
+    try {
+      const response = await api.post(
+        "/auth/log-in/verify-otp",
+        clientCredentials,
+      );
+
+      return response.data;
+    } catch (error) {
+      const brokenResponse = {
+        message: "",
+        success: null,
+        status: null,
+      };
+
+      const { message, success } = await error.response.data;
+      const { status } = await error.response;
+      brokenResponse.message = message;
+      brokenResponse.success = success;
+      brokenResponse.status = status;
       return thunkAPI.rejectWithValue(brokenResponse);
     }
   },

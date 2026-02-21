@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main-container {
+  position: absolute;
+  z-index: 99999;
+  background-color: rgb(207, 39, 143, 0.9);
+  width: 100vw;
+  height: auto;
+}
+
+.heading-back-toggle {
+  margin: auto 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.heading-back-toggle h1 {
+  flex: 1;
+  color: white;
+  text-align: center;
+}
+.heading-back-toggle a {
+}
+.back {
+  color: white;
+  font-size: 1.8rem;
+}

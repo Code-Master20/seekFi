@@ -1,19 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./LogIn.module.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logInOtpReceived } from "../../features/auth/authThunks";
 
 export const LogIn = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user, successMessage, errorMessage, loading, isAuthenticated, otp } =
+    useSelector((state) => state.auth);
 
   const [clientCredentials, setClientCredentials] = useState({
     email: "",
     password: "",
   });
 
+  const handleOnChange = (e) => {
+    let { name, value } = e.target;
+    setClientCredentials((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // dispatch login thunk here later
+    const trimedClientCredentials = {
+      email: clientCredentials.email.trim().toLowerCase(),
+      password: clientCredentials.password.trim(),
+    };
+
+    dispatch(logInOtpReceived(trimedClientCredentials));
+
+    if (otp.sent) {
+      setClientCredentials((prev) => ({
+        ...prev,
+        email: "",
+        password: "",
+      }));
+    }
   };
+
+  // ✅ navigate to otp page after otp sent
+  useEffect(() => {
+    if (otp.sent) {
+      navigate("/verify-otp");
+    }
+  }, [otp.sent, navigate]);
 
   return (
     <main className={styles["main-container-first"]}>
@@ -26,9 +56,11 @@ export const LogIn = () => {
                 <label htmlFor="email">Email :</label>
                 <input
                   id="email"
-                  type="email"
+                  type="text"
                   name="email"
                   placeholder="your email"
+                  value={clientCredentials.email}
+                  onChange={handleOnChange}
                 />
               </div>
 
@@ -39,6 +71,8 @@ export const LogIn = () => {
                   type="password"
                   name="password"
                   placeholder="your password"
+                  value={clientCredentials.password}
+                  onChange={handleOnChange}
                 />
               </div>
 

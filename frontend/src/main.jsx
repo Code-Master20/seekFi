@@ -23,6 +23,7 @@ import { OtpVerification } from "./components/OtpVerification/OtpVerification.js
 import { Navigate } from "react-router-dom";
 import { PrivateRoute } from "./features/PrivateRoute.jsx";
 import { PublicRoute } from "./features/PublicRoute.jsx";
+import { Dashboard } from "./pages/Dashboard/Dashboard.jsx";
 
 //creating routes for different pages
 const Router = createBrowserRouter(
@@ -57,6 +58,16 @@ const Router = createBrowserRouter(
       />
 
       {/* Protected routes */}
+
+      <Route
+        path="dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      ></Route>
+
       <Route
         path="home-feed"
         element={
