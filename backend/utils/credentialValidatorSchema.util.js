@@ -53,7 +53,6 @@ const emailSchema = z
 
 //========================zodErrorSchema========================
 const logInZodSchema = z.object({
-  username: usernameSchema,
   email: emailSchema,
   password: passwordSchema,
 });

@@ -9,6 +9,45 @@ const temporaryUserSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    bio: {
+      type: [String], // <-- Array of strings
+      trim: true,
+    },
+    status: {
+      //maried, unmarried, single, relationships, divorced, etc
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+    gender: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+    dob: {
+      tupe: String,
+    },
+
+    talent: {
+      type: [String],
+      trim: true,
+      lowercase: true,
+    },
+    profession: {
+      type: String, //doctor, teacher, nurse, police, army, cifs, bsf, software-developer, etc
+      trim: true,
+      lowercase: true,
+    },
+
+    avatar: {
+      type: String,
+      trim: true,
+    },
+    banner: {
+      type: String,
+      trim: true,
+    },
+
     email: {
       type: String,
       required: true,
@@ -19,6 +58,10 @@ const temporaryUserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    creator: {
+      type: Boolean,
+      default: false,
     },
     expiresAt: {
       type: Date,

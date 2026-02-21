@@ -60,9 +60,9 @@ const sendingOtpForLogIn = async (req, res) => {
       purpose: "login",
     });
 
-    return new SuccessHandler(200, `verification code sent to ${email}`).send(
-      res,
-    );
+    return new SuccessHandler(200, `verification code sent to ${email}`, {
+      email,
+    }).send(res);
   } catch (error) {
     return new ErrorHandler(500, "failed to send verification code")
       .log("sending otp for log-in error", error)
