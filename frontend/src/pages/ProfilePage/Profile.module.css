@@ -64,8 +64,10 @@
   align-items: center;
 }
 .profile-pic {
+  color: rgb(0, 225, 255);
+  border: 1.8px solid rgb(0, 225, 255);
   border-radius: 50%;
-  box-shadow: 1px 0px 39px rgba(249, 3, 3, 0.5);
+  box-shadow: 1px 0px 39px currentColor;
 }
 .name {
   color: white;
