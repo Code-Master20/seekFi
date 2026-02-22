@@ -13,22 +13,61 @@
 }
 
 .content-container {
-  width: 98vw;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
 .owner-window {
-  width: 100%;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.bannar-img {
+  width: 100vw;
+}
+
+.img-uploader {
+  position: absolute;
+  right: 2rem;
+  top: 1.5rem;
+  color: rgb(180, 156, 6);
+  box-shadow: 0px 1px 4px 6px rgba(249, 3, 3, 0.5);
+  border-radius: 0.5rem;
+  outline: 1px red solid;
+}
+
+.owner-info {
+  background-color: rgb(157, 181, 202);
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: relative;
+  bottom: 5rem;
+  border-top-left-radius: 2rem;
+  border-top-right-radius: 2rem;
+  box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.3);
+}
+
+.name-pic {
+  position: relative;
+  bottom: 2rem;
+  right: 28vw;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .profile-pic {
-  position: absolute;
-  top: 30%;
-  left: 1.5%;
   border-radius: 50%;
+  box-shadow: 1px 0px 39px rgba(249, 3, 3, 0.5);
+}
+.name {
+  color: white;
+  font-size: clamp(1.5rem, 4vw, 4rem);
 }
