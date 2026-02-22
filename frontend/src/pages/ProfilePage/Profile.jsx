@@ -1,6 +1,7 @@
 import styles from "./Profile.module.css";
 import bannerImg from "../../assets/bannerImg.png";
-import { RiImageEditLine } from "react-icons/ri";
+import { RiImageEditLine, RiImageCircleAiFill } from "react-icons/ri";
+
 import { ImageUpload } from "../../components/Uploader/ImgUpload";
 import profilePic from "../../assets/profilePic.jpg";
 import { useState, useEffect, useRef } from "react";
@@ -42,7 +43,12 @@ export const Profile = () => {
               height={profileSize}
               className={styles["profile-pic"]}
             />
+
             <figcaption className={styles["name"]}>Sahidur Miah</figcaption>
+            <ImageUpload
+              Icon={RiImageCircleAiFill}
+              className={styles["profile-img-uploader"]}
+            />
           </figure>
           <ul className={styles["stats"]}>
             <li>
