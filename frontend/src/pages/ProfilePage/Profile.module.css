@@ -105,10 +105,10 @@
 
 .stats li span {
   color: white;
-  font-size: clamp(1.2rem, 4vw, 3rem);
+  font-size: clamp(1rem, 4vw, 3rem);
 }
 
 .stats li strong {
   color: rgb(123, 119, 119);
-  font-size: clamp(1.2rem, 4vw, 2.8rem);
+  font-size: clamp(1rem, 4vw, 2.8rem);
 }
