@@ -45,11 +45,12 @@
 .owner-info {
   background-color: rgb(157, 181, 202);
   width: 100vw;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
   position: relative;
   bottom: 5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
   box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.3);
@@ -57,8 +58,8 @@
 
 .name-pic {
   position: relative;
+  left: 0.3rem;
   bottom: 2rem;
-  right: 25vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,7 +77,38 @@
 
 .profile-img-uploader {
   position: relative;
-  bottom: 8rem;
-  left: 3.5rem;
+  bottom: 4rem;
+  left: 2.5rem;
   color: rgb(180, 156, 6);
+}
+
+.stats {
+  flex: 1;
+  position: relative;
+  bottom: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.stats li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  row-gap: 0.5rem;
+  box-shadow: 1px 1px 2.5px rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.stats li span {
+  color: white;
+  font-size: clamp(1.2rem, 4vw, 3rem);
+}
+
+.stats li strong {
+  color: rgb(123, 119, 119);
+  font-size: clamp(1.2rem, 4vw, 2.8rem);
 }
