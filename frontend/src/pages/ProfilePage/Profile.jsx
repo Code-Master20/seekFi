@@ -1,74 +1,98 @@
 import styles from "./Profile.module.css";
 import bannerImg from "../../assets/bannerImg.png";
 import { RiImageEditLine, RiImageCircleAiFill } from "react-icons/ri";
-
+import { MdEditLocationAlt } from "react-icons/md";
+import { FaUserEdit } from "react-icons/fa";
+import { EditProfile } from "../../components/Edit/EditPrfileInfo";
 import { ImageUpload } from "../../components/Uploader/ImgUpload";
 import profilePic from "../../assets/profilePic.jpg";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+
 export const Profile = () => {
   const [width, setWidth] = useState(window.innerWidth);
+
   useEffect(() => {
-    const screenWidthTracker = () => {
-      setWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", screenWidthTracker);
-    return () => {
-      window.removeEventListener("resize", screenWidthTracker);
-    };
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
-  console.log("inner width :", width);
-  console.log("outerWidth:", window.outerWidth);
-  const profileSize = width * 0.22;
+
+  const profileSize = width < 768 ? 120 : 160;
 
   return (
-    <main className={styles["main-container"]}>
-      <section className={styles["content-container"]}>
-        <article className={styles["owner-window"]}>
-          <img
-            src={bannerImg}
-            alt=""
-            className={styles["bannar-img"]}
-            height={width / 2.308}
-          />
+    <main className={styles.mainContainer}>
+      <section className={styles.contentContainer}>
+        {/* Banner */}
+        <div className={styles.bannerWrapper}>
+          <img src={bannerImg} alt="Banner" className={styles.bannerImg} />
           <ImageUpload
             Icon={RiImageEditLine}
-            className={styles["img-uploader"]}
+            className={styles.bannerUploader}
           />
-        </article>
-        <article className={styles["owner-info"]}>
-          <figure className={styles["name-pic"]}>
-            <img
-              src={profilePic}
-              alt="Profile picture"
-              height={profileSize}
-              className={styles["profile-pic"]}
-            />
+        </div>
 
-            <figcaption className={styles["name"]}>Sahidur Miah</figcaption>
-            <ImageUpload
-              Icon={RiImageCircleAiFill}
-              className={styles["profile-img-uploader"]}
-            />
-          </figure>
-          <ul className={styles["stats"]}>
-            <li>
-              <span>following</span>
-              <strong>1234</strong>
-            </li>
-            <li>
-              <span>followers</span>
-              <strong>34235</strong>
-            </li>
-            <li>
-              <span>posts</span>
-              <strong>3456543</strong>
-            </li>
-            <li>
-              <span>friends</span>
-              <strong>4532456</strong>
-            </li>
-          </ul>
-        </article>
+        {/* Profile Card */}
+        <div className={styles.profileCard}>
+          <div className={styles.profileHeader}>
+            <div className={styles.profileLeft}>
+              <img
+                src={profilePic}
+                alt="Profile"
+                height={profileSize}
+                className={styles.profilePic}
+              />
+
+              <div className={styles.userInfo}>
+                <h2 className={styles.name}>Sahidur Miah</h2>
+                <p className={styles.profession}>Profession: Teacher</p>
+              </div>
+
+              <ImageUpload
+                Icon={RiImageCircleAiFill}
+                className={styles.profileUploader}
+              />
+            </div>
+
+            <ul className={styles.stats}>
+              <li>
+                <span>Following</span>
+                <strong>1234</strong>
+              </li>
+              <li>
+                <span>Followers</span>
+                <strong>34235</strong>
+              </li>
+              <li>
+                <span>Posts</span>
+                <strong>3456</strong>
+              </li>
+              <li>
+                <span>Friends</span>
+                <strong>4532</strong>
+              </li>
+            </ul>
+
+            <EditProfile Icon={FaUserEdit} className={styles.editProfileBtn} />
+          </div>
+
+          {/* Bio */}
+          <div className={styles.bioSection}>
+            <p>
+              <MdEditLocationAlt /> Mahendraganj, Meghalaya, India
+            </p>
+            <p>Coder</p>
+            <p>Full-Stack Developer</p>
+            <p>Backend Developer</p>
+          </div>
+
+          {/* Posts Placeholder */}
+          <div className={styles.postsSection}>
+            <h3>Posts</h3>
+            <div className={styles.postsPlaceholder}>
+              Posts will appear here
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );

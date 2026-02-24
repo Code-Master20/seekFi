@@ -4,111 +4,145 @@
   box-sizing: border-box;
 }
 
-.main-container {
-  width: 100vw;
-  height: auto;
+.mainContainer {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
-.content-container {
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.contentContainer {
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* ===== Banner ===== */
+.bannerWrapper {
   position: relative;
+  width: 100%;
 }
 
-.owner-window {
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+.bannerImg {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
 }
 
-.bannar-img {
-  width: 100vw;
-}
-
-.img-uploader {
+.bannerUploader {
   position: absolute;
   right: 2rem;
-  top: 1.5rem;
+  bottom: 1rem;
   color: rgb(180, 156, 6);
-  box-shadow: 0px 1px 4px 6px rgba(249, 3, 3, 0.5);
-  border-radius: 0.5rem;
-  outline: 1px red solid;
 }
 
-.owner-info {
+/* ===== Profile Card ===== */
+.profileCard {
   background-color: rgb(157, 181, 202);
-  width: 100vw;
-  position: relative;
-  bottom: 5rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  border-top-left-radius: 2rem;
-  border-top-right-radius: 2rem;
-  box-shadow: 0 -6px 25px rgba(0, 0, 0, 0.3);
+  border-radius: 2rem 2rem 0 0;
+  margin-top: -60px;
+  padding: 2rem;
+  box-shadow: 0 -6px 25px rgba(4, 4, 4, 0.5);
 }
 
-.name-pic {
-  position: relative;
-  left: 0.3rem;
-  bottom: 2rem;
+/* ===== Header ===== */
+.profileHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
-.profile-pic {
-  color: rgb(0, 225, 255);
-  border: 1.8px solid rgb(0, 225, 255);
+
+.profileLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.profilePic {
   border-radius: 50%;
+  border: 2px solid rgb(0, 225, 255);
   box-shadow: 1px 0px 39px currentColor;
 }
-.name {
-  color: white;
-  font-size: clamp(0.8rem, 4vw, 3.5rem);
-}
 
-.profile-img-uploader {
-  position: relative;
-  bottom: 20vw;
-  left: 7vw;
+.profileUploader {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   color: rgb(180, 156, 6);
 }
 
-.stats {
-  flex: 1;
-  position: relative;
-  bottom: 3.8rem;
+.userInfo {
   display: flex;
-  align-items: center;
-  justify-content: space-around;
+  flex-direction: column;
+}
+
+.name {
+  color: rgb(149, 116, 70);
+  font-size: clamp(1rem, 2vw, 1.8rem);
+}
+
+.profession {
+  color: rgb(80, 71, 71);
+  font-weight: 600;
+}
+
+/* ===== Stats ===== */
+.stats {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
 }
 
 .stats li {
+  background-color: rgb(218, 226, 57);
+  padding: 0.7rem 1rem;
+  border-radius: 1rem;
+  box-shadow: 1px 1px 2.5px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  row-gap: 0.5rem;
-  box-shadow: 1px 1px 2.5px rgba(0, 0, 0, 0.3);
-  padding: 0.5rem;
-  border-radius: 1rem;
   cursor: pointer;
 }
 
-.stats li span {
-  color: white;
-  font-size: clamp(0.8rem, 4vw, 3rem);
+.stats span {
+  color: rgb(122, 93, 93);
+  font-weight: 600;
 }
 
-.stats li strong {
+.stats strong {
   color: rgb(123, 119, 119);
-  font-size: clamp(0.8rem, 4vw, 2.8rem);
+}
+
+.editProfileBtn {
+  position: relative;
+}
+
+/* ===== Bio ===== */
+.bioSection {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* ===== Posts ===== */
+.postsSection {
+  margin-top: 3rem;
+}
+
+.postsSection h3 {
+  margin-bottom: 1rem;
+}
+
+.postsPlaceholder {
+  min-height: 350px;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
