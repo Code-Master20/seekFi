@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    location: {
+      type: [String],
+      trim: true,
+      lowercase: true,
+    },
+
     status: {
       //maried, unmarried, single, relationships, divorced, etc
       type: String,
@@ -30,7 +36,7 @@ const userSchema = new mongoose.Schema(
     },
 
     dob: {
-      tupe: String,
+      type: String,
     },
 
     talent: {
