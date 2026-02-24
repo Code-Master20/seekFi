@@ -23,7 +23,7 @@
 
 .bannerImg {
   width: 100%;
-  height: 260px;
+  height: 200px;
   object-fit: cover;
 }
 
@@ -60,15 +60,28 @@
 }
 
 .profilePic {
+  color: rgb(0, 225, 255);
   border-radius: 50%;
   border: 2px solid rgb(0, 225, 255);
   box-shadow: 1px 0px 39px currentColor;
+}
+.profile-pic-container {
+  position: relative;
+}
+
+.profile-pic-container strong {
+  position: absolute;
+  color: rgb(115, 110, 110);
+  transform: rotate(-30deg); /* change 45 to any angle you want */
+  top: 3rem;
+  left: 1rem;
+  letter-spacing: 0.2px;
 }
 
 .profileUploader {
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 8rem;
   color: rgb(180, 156, 6);
 }
 
@@ -116,6 +129,41 @@
 
 .editProfileBtn {
   position: relative;
+}
+.creator-story-btns {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.creator-story-btns button {
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.8rem;
+  border: none;
+  cursor: pointer;
+}
+.creator-story-btns button:active {
+  outline: 0.6px greenyellow solid;
+}
+
+.creatorBtn {
+  position: relative;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.8rem;
+  border: none;
+  cursor: pointer;
+}
+
+.creatorIndicator {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 0.8rem;
+  background: white;
+  border-radius: 50%;
+  padding: 2px 5px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 }
 
 /* ===== Bio ===== */

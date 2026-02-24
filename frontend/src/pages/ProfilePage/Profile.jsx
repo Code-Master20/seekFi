@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 
 export const Profile = () => {
   const [width, setWidth] = useState(window.innerWidth);
+  const [isCreatorMode, setIsCreatorMode] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -35,12 +36,15 @@ export const Profile = () => {
         <div className={styles.profileCard}>
           <div className={styles.profileHeader}>
             <div className={styles.profileLeft}>
-              <img
-                src={profilePic}
-                alt="Profile"
-                height={profileSize}
-                className={styles.profilePic}
-              />
+              <article className={styles["profile-pic-container"]}>
+                <img
+                  src={profilePic}
+                  alt="Profile"
+                  height={profileSize}
+                  className={styles.profilePic}
+                />
+                {isCreatorMode && <strong>creator</strong>}
+              </article>
 
               <div className={styles.userInfo}>
                 <h2 className={styles.name}>Sahidur Miah</h2>
@@ -71,8 +75,19 @@ export const Profile = () => {
                 <strong>4532</strong>
               </li>
             </ul>
-
             <EditProfile Icon={FaUserEdit} className={styles.editProfileBtn} />
+            <div className={styles["creator-story-btns"]}>
+              <button
+                className={styles.creatorBtn}
+                onClick={() => setIsCreatorMode((prev) => !prev)}
+              >
+                creator mode
+                <span className={styles.creatorIndicator}>
+                  {isCreatorMode ? "✔" : "✖"}
+                </span>
+              </button>
+              <button>add to story</button>
+            </div>
           </div>
 
           {/* Bio */}
