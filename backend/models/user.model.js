@@ -59,6 +59,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    avatarCloudinaryId: {
+      type: String,
+    },
+
+    bannerCloudinaryId: {
+      type: String,
+    },
     email: {
       type: String,
       required: true,
@@ -72,6 +79,10 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     creator: {
+      type: Boolean,
+      default: false,
+    },
+    storyAdd: {
       type: Boolean,
       default: false,
     },

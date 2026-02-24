@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./user.model");
 
 const postSchema = new mongoose.Schema(
   {
@@ -25,6 +24,13 @@ const postSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
+    // ✅ NEW FIELD
+    cloudinaryId: {
+      type: String,
+      required: true,
+    },
+
     likeCount: {
       type: Number,
       default: 0,
@@ -52,5 +58,4 @@ const postSchema = new mongoose.Schema(
   },
 );
 
-const Post = mongoose.model("Post", postSchema);
-module.exports = Post;
+module.exports = mongoose.model("Post", postSchema);
