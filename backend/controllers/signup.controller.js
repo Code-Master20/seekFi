@@ -30,12 +30,14 @@ const signUp = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
+    // 🔥 remove password and convert _id → id
+    const userObject = userCreated.toObject();
+    const { password: _, _id, ...rest } = userObject;
     const data = {
-      id: userCreated._id,
-      username: userCreated.username,
-      email: userCreated.email,
-      creator: userCreated.creator,
+      id: _id,
+      ...rest,
     };
+
     return new SuccessHandler(201, "sign-up successfully done", data).send(res);
   } catch (error) {
     return new ErrorHandler(500, "internal server error")

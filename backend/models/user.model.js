@@ -27,16 +27,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       lowercase: true,
+      default: null,
     },
 
     gender: {
       type: String,
       trim: true,
       lowercase: true,
+      default: null,
     },
 
     dob: {
       type: String,
+      default: null,
     },
 
     talent: {
@@ -49,15 +52,16 @@ const userSchema = new mongoose.Schema(
       type: String, //doctor, teacher, nurse, police, army, cifs, bsf, software-developer, etc
       trim: true,
       lowercase: true,
+      default: null,
     },
 
     avatar: {
       type: String,
-      trim: true,
+      default: null,
     },
     banner: {
       type: String,
-      trim: true,
+      default: null,
     },
     avatarCloudinaryId: {
       type: String,
@@ -85,6 +89,13 @@ const userSchema = new mongoose.Schema(
     storyAdd: {
       type: Boolean,
       default: false,
+    },
+    storyUrl: {
+      type: String,
+      default: null,
+    },
+    storyCloudinaryId: {
+      type: String,
     },
   },
   {
