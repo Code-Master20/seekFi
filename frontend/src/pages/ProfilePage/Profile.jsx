@@ -7,10 +7,15 @@ import { EditProfile } from "../../components/Edit/EditPrfileInfo";
 import { ImageUpload } from "../../components/Uploader/ImgUpload";
 import profilePic from "../../assets/profilePic.jpg";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 export const Profile = () => {
   const [width, setWidth] = useState(window.innerWidth);
   const [isCreatorMode, setIsCreatorMode] = useState(false);
+
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
+  const isOwner = user.id;
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);

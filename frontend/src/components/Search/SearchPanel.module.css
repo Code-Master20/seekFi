@@ -1,0 +1,122 @@
+.searchOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(240, 244, 248, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+  z-index: 999;
+}
+
+.searchContainer {
+  width: 92%;
+  max-width: 650px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.8rem;
+  color: #1a1a1a;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.searchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.searchHeader h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.closeBtn:hover {
+  color: #000;
+}
+
+.searchOptions {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.searchOptions button {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: 25px;
+  border: 1px solid #dcdcdc;
+  background: #f5f7fa;
+  color: #333;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-weight: 500;
+}
+
+.searchOptions button:hover {
+  background: #e9eef5;
+}
+
+.active {
+  background: #00e1ff;
+  color: #000;
+  border: none;
+  font-weight: 600;
+}
+
+.searchInputWrapper {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.searchInputWrapper input {
+  flex: 1;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+  outline: none;
+  background: #fafafa;
+  transition: 0.2s ease;
+}
+
+.searchInputWrapper input:focus {
+  border-color: #00e1ff;
+  background: #ffffff;
+}
+
+.searchInputWrapper button {
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  border: none;
+  background: #00e1ff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.searchInputWrapper button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 225, 255, 0.3);
+}
+
+.resultsPlaceholder {
+  min-height: 150px;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+  color: #888;
+}

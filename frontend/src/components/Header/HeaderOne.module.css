@@ -67,3 +67,8 @@
 .create-search-sms :nth-child(3) {
   font-size: 2.3rem;
 }
+
+.search-panel {
+  position: absolute;
+  z-index: 9999;
+}
