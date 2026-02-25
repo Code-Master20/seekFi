@@ -89,7 +89,7 @@ const authSlice = createSlice({
           JSON.stringify({ email: action.payload.data.email }),
         );
         localStorage.setItem("otp-sent", JSON.stringify(true));
-        localStorage.setItem("purpose", "signup");
+        localStorage.setItem("purpose", JSON.stringify("signup"));
         localStorage.removeItem("isLogInClicked");
       })
       .addCase(signUpOtpReceived.rejected, (state, action) => {
