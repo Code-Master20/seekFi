@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import styles from "./LogIn.module.css";
+import styles from "./LogInSignUp.module.css";
+import style from "./SignUp.module.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logInOtpReceived } from "../../features/auth/authThunks";
@@ -77,8 +78,14 @@ export const LogIn = () => {
               </div>
 
               <div className={styles["btn-container"]}>
-                <button type="submit">log-in</button>
-                <button type="button" onClick={() => navigate("/signup")}>
+                <button className={styles["log-in-btn"]} type="submit">
+                  log-in
+                </button>
+                <button
+                  className={style["sign-up-btn"]}
+                  type="button"
+                  onClick={() => navigate("/signup")}
+                >
                   sign-up
                 </button>
               </div>

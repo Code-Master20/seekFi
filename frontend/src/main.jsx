@@ -1,4 +1,5 @@
-import { StrictMode } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { Root } from "./Root.jsx";
@@ -131,9 +132,17 @@ const Router = createBrowserRouter(
 //using defined routes inside RouterProvider to reflect different pages
 // on visit the different url
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={Router}></RouterProvider>
-    </Provider>
-  </StrictMode>,
+  <Provider store={store}>
+    <RouterProvider router={Router}></RouterProvider>
+    <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={true}
+      closeOnClick
+      pauseOnHover
+      draggable
+      theme="dark"
+    />
+  </Provider>,
 );

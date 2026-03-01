@@ -1,22 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "../../pages/ProfilePage/LogIn.module.css";
+import styles from "../../pages/ProfilePage/LogInSignUp.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
   otpVerifiedAndLoggedIn,
   otpVerifiedAndSignedUp,
 } from "../../features/auth/authThunks";
+import { toast } from "react-toastify";
+import { resetOtpLockState } from "../../features/auth/authSlice";
+import { InvalidInputTracker } from "../InvalidInputTracker/InvalidInputTracker";
 
 export const OtpVerification = () => {
+  const hasRedirected = useRef(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, isAuthenticated, purpose } = useSelector((state) => state.auth);
+  const {
+    user,
+    isAuthenticated,
+    purpose,
+    formLoading,
+    successMessage,
+    errorMessage,
+    id,
+  } = useSelector((state) => state.auth);
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedPurpose = JSON.parse(localStorage.getItem("purpose"));
 
   const [clientCredentials, setClientCredentials] = useState({
-    email: user?.email || storedUser?.email || "",
+    email: storedUser ? storedUser.email : "",
     otp: "",
     purpose: storedPurpose ? storedPurpose : purpose,
   });
@@ -28,21 +40,83 @@ export const OtpVerification = () => {
         email: user.email,
       }));
     }
+
+    if (!user?.email) {
+      if (storedUser?.email) {
+        setClientCredentials((prev) => ({
+          ...prev,
+          email: storedUser.email,
+        }));
+      }
+    }
   }, [user]);
 
-  const handleOnChange = (e) => {
+  const handleOnChange = async (e) => {
     const { name, value } = e.target;
     setClientCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const [focus, setFocus] = useState(true);
+  const [timerId, setTimerId] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setFocus(true);
 
     if (purpose === "signup" || storedPurpose === "signup") {
-      dispatch(otpVerifiedAndSignedUp(clientCredentials));
+      const resultAction = await dispatch(
+        otpVerifiedAndSignedUp(clientCredentials),
+      );
+
+      if (otpVerifiedAndSignedUp.rejected.match(resultAction)) {
+        setLoading(false);
+        const timer = setTimeout(() => {
+          setFocus(false);
+        }, 5000);
+        setTimerId((prev) => [...prev, timer]);
+
+        if (timerId.length > 1) {
+          for (let index = 0; index < timerId.length; index++) {
+            clearTimeout(timerId[index]);
+          }
+        }
+      }
+
+      if (otpVerifiedAndSignedUp.fulfilled.match(resultAction)) {
+        setLoading(false);
+      }
     }
     if (purpose === "login" || storedPurpose === "login") {
-      dispatch(otpVerifiedAndLoggedIn(clientCredentials));
+      const resultAction = await dispatch(
+        otpVerifiedAndLoggedIn(clientCredentials),
+      );
+
+      if (otpVerifiedAndLoggedIn.rejected.match(resultAction)) {
+        setLoading(false);
+        const timer = setTimeout(() => {
+          setFocus(false);
+        }, 5000);
+        setTimerId((prev) => [...prev, timer]);
+        if (timerId.length > 1) {
+          for (let index = 0; index < timerId.length; index++) {
+            clearTimeout(timerId[index]);
+          }
+        }
+      }
+
+      if (otpVerifiedAndLoggedIn.fulfilled.match(resultAction)) {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleFocus = (e) => {
+    setFocus(false);
+
+    for (let index = 0; index < timerId.length; index++) {
+      clearTimeout(timerId[index + 1]);
     }
   };
 
@@ -50,7 +124,42 @@ export const OtpVerification = () => {
     if (isAuthenticated) {
       navigate("/home-feed");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, successMessage]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    if (hasRedirected.current) return;
+
+    hasRedirected.current = true;
+
+    const timer = setTimeout(() => {
+      dispatch(resetOtpLockState());
+      navigate(purpose === "signup" ? "/signup" : "/login", { replace: true });
+    }, 2000);
+
+    toast.warn(errorMessage);
+
+    return () => clearTimeout(timer);
+  }, [id, purpose, dispatch, navigate]);
+
+  if (loading) {
+    return (
+      <section className={styles["form-loading-state"]}>
+        <h1>verifying otp</h1>
+      </section>
+    );
+  }
+
+  if (id) {
+    return (
+      <section className={styles["form-loading-state"]}>
+        <h1>
+          To many tries with invalid otp. Redirecting to {purpose} page again
+        </h1>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -69,6 +178,7 @@ export const OtpVerification = () => {
                     placeholder="your email"
                     value={clientCredentials.email}
                     onChange={handleOnChange}
+                    disabled
                   />
                 </div>
 
@@ -81,11 +191,20 @@ export const OtpVerification = () => {
                     placeholder="Enter verification code"
                     value={clientCredentials.otp}
                     onChange={handleOnChange}
+                    onFocus={(e) => handleFocus(e)}
                   />
+                  {errorMessage && !id && focus && (
+                    <InvalidInputTracker
+                      className={styles["invalid-input-tracker"]}
+                      inputErrorString={errorMessage}
+                    />
+                  )}
                 </div>
 
                 <div className={styles["btn-container"]}>
-                  <button type="submit">verify code</button>
+                  <button className={styles["log-in-btn"]} type="submit">
+                    verify code
+                  </button>
                 </div>
               </form>
             </div>

@@ -8,13 +8,13 @@ import { checkMe } from "./features/auth/authThunks";
 
 export const Root = () => {
   const dispatch = useDispatch();
-  const { loading, isAuthenticated } = useSelector((state) => state.auth);
+  const { checkingAuth, isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(checkMe());
   }, [dispatch]);
 
-  if (loading) {
+  if (checkingAuth) {
     return (
       <div className="first-loading-content">
         <h1>checking if you are an existing user...</h1>

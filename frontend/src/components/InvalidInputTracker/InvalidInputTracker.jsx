@@ -1,7 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
+import styles from "./InvalidInputTracker.module.css";
 
-export const InvalidInputTracker = () => {
-  // const { success } = useSelector((state) => state.auth);
-  // console.log(success);
-  return <span>⚠️{inputErrorString}</span>;
+export const InvalidInputTracker = ({ className, inputErrorString }) => {
+  return (
+    <span className={`${className} ${styles["input-error"]}`}>
+      ⚠️{inputErrorString}
+    </span>
+  );
 };

@@ -9,12 +9,12 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 80px;
   z-index: 999;
 }
 
 .searchContainer {
   width: 92%;
+  height: 100vh;
   max-width: 650px;
   background: #ffffff;
   border-radius: 18px;

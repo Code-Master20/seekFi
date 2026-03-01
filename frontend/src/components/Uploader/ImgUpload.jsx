@@ -1,31 +1,48 @@
-import { RiImageEditLine } from "react-icons/ri";
 import { useRef } from "react";
 
-export const ImageUpload = ({ Icon, className }) => {
+export const ImageUpload = ({
+  Icon,
+  className,
+  onFileSelect,
+  accept = "image/*",
+  multiple = false,
+  size = 25,
+}) => {
   const fileInputRef = useRef(null);
 
   const handleIconClick = () => {
-    fileInputRef.current.click(); // triggers file input
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    console.log(file);
+    const files = multiple ? e.target.files : e.target.files[0];
+
+    if (!files) return;
+
+    if (onFileSelect) {
+      onFileSelect(files);
+    }
+
+    // reset input so same file can be selected again
+    e.target.value = "";
   };
 
   return (
     <div className={className}>
-      {/* Hidden Input */}
       <input
         type="file"
-        accept="image/*"
+        accept={accept}
+        multiple={multiple}
         ref={fileInputRef}
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
 
-      {/* Clickable Icon */}
-      <Icon size={25} style={{ cursor: "pointer" }} onClick={handleIconClick} />
+      <Icon
+        size={size}
+        style={{ cursor: "pointer" }}
+        onClick={handleIconClick}
+      />
     </div>
   );
 };

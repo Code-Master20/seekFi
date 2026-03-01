@@ -1,4 +1,4 @@
-.log-in-btn {
+.sign-up-btn {
   text-align: center;
   background-color: chocolate;
   border: none;
@@ -15,9 +15,9 @@
   right: 0;
 }
 
-.log-in-btn:hover {
+.sign-up-btn:hover {
   box-shadow: 0px 0px 8px 0.2px rgb(42, 254, 0);
 }
-.log-in-btn:active {
+.sign-up-btn:active {
   transform: scale(1.02);
 }
