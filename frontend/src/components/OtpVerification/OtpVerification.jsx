@@ -27,26 +27,27 @@ export const OtpVerification = () => {
 
   function handleOnChange(event) {
     let { name, value } = event.target;
+
+    // update input instantly
+    setClientCredentials((prev) => ({
+      ...prev,
+      [name]: value.trim(),
+    }));
+
+    // debounce only localStorage
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
     debounceRef.current = setTimeout(() => {
-      setClientCredentials((prev) => ({
-        ...prev,
-        [name]: value.trim(),
-      }));
-
-      setTimeout(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            ...storedUser,
-            otp: value.trim(),
-          }),
-        );
-      }, 200);
+      const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...storedUser,
+          otp: value.trim(),
+        }),
+      );
     }, 1000);
   }
 
