@@ -5,6 +5,10 @@ const User = require("../../models/user.model");
 const ErrorHandler = require("../../utils/errorHandler.util");
 const SuccessHandler = require("../../utils/successHandler.util");
 const EmailOtp = require("../../models/emailOtp.model");
+const BlockedEmail = require("../../models/temBlockEmails.model");
+
+// in-memory attempt tracker
+const loginAttempts = new Map();
 
 // ================= SIGN UP OTP =================
 const sendingOtpForSignUp = async (req, res) => {
@@ -23,6 +27,7 @@ const sendingOtpForSignUp = async (req, res) => {
       email,
       purpose: "signup",
     });
+
     return new SuccessHandler(200, `verification code sent to ${email}`, {
       email,
     }).send(res);
@@ -38,7 +43,28 @@ const sendingOtpForLogIn = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // check if email is blocked
+    const blocked = await BlockedEmail.findOne({ email });
+
+    if (blocked) {
+      const BLOCK_TIME = 5400 * 1000; // 1.5 hours
+
+      const timePassed = Date.now() - blocked.blockedAt.getTime();
+      const timeLeft = BLOCK_TIME - timePassed;
+
+      const minutes = Math.floor(timeLeft / 60000);
+      const seconds = Math.floor((timeLeft % 60000) / 1000);
+
+      return new ErrorHandler(
+        429,
+        `Too many failed attempts. Try again after ${minutes}m ${seconds}s`,
+      )
+        .log("login blocked", `blocked email attempted login: ${email}`)
+        .send(res);
+    }
+
     const userExisted = await User.findOne({ email });
+
     if (!userExisted) {
       return new ErrorHandler(404, "account not found")
         .log(
@@ -47,18 +73,37 @@ const sendingOtpForLogIn = async (req, res) => {
         )
         .send(res);
     }
+
     const isMatch = await userExisted.comparePassword(password);
 
+    // ===== WRONG PASSWORD =====
     if (!isMatch) {
+      const attempts = loginAttempts.get(email) || 0;
+      const newAttempts = attempts + 1;
+
+      loginAttempts.set(email, newAttempts);
+
+      // block after 3 attempts
+      if (newAttempts >= 3) {
+        await BlockedEmail.create({ email });
+        loginAttempts.delete(email);
+      }
+
       return new ErrorHandler(401, "invalid email or password")
         .log("email or password mis-matched", "invalid email or password")
         .send(res);
     }
 
+    // ===== PASSWORD CORRECT =====
+    loginAttempts.delete(email);
+
     await sendOtp({
       email,
       purpose: "login",
     });
+
+    // reset block if exists
+    await BlockedEmail.deleteOne({ email });
 
     return new SuccessHandler(200, `verification code sent to ${email}`, {
       email,

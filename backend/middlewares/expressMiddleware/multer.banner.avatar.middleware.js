@@ -22,7 +22,6 @@ image/jpeg
 image/png
 application/pdf
 video/mp4
-
 */
 
 const fileFilter = (req, file, cb) => {
