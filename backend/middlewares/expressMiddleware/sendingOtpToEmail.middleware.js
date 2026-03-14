@@ -7,9 +7,6 @@ const SuccessHandler = require("../../utils/successHandler.util");
 const EmailOtp = require("../../models/emailOtp.model");
 const BlockedEmail = require("../../models/temBlockEmails.model");
 
-// in-memory attempt tracker
-const loginAttempts = new Map();
-
 // ================= SIGN UP OTP =================
 const sendingOtpForSignUp = async (req, res) => {
   try {
@@ -39,15 +36,17 @@ const sendingOtpForSignUp = async (req, res) => {
 };
 
 // ================= LOGIN OTP =================
+const ipAttempts = new Map();
+const IP_WINDOW = 18 * 60 * 1000; // 18 minutes
+const IP_MAX_ATTEMPTS = 15;
 const sendingOtpForLogIn = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // check if email is blocked
     const blocked = await BlockedEmail.findOne({ email });
 
-    if (blocked) {
-      const BLOCK_TIME = 5400 * 1000; // 1.5 hours
+    if (blocked && blocked.count > 2) {
+      const BLOCK_TIME = 5400 * 1000;
 
       const timePassed = Date.now() - blocked.blockedAt.getTime();
       const timeLeft = BLOCK_TIME - timePassed;
@@ -66,7 +65,7 @@ const sendingOtpForLogIn = async (req, res) => {
     const userExisted = await User.findOne({ email });
 
     if (!userExisted) {
-      return new ErrorHandler(404, "account not found")
+      return new ErrorHandler(404, "invalid email or password")
         .log(
           "account error",
           "account has not been created with this email yet",
@@ -76,17 +75,22 @@ const sendingOtpForLogIn = async (req, res) => {
 
     const isMatch = await userExisted.comparePassword(password);
 
-    // ===== WRONG PASSWORD =====
     if (!isMatch) {
-      const attempts = loginAttempts.get(email) || 0;
-      const newAttempts = attempts + 1;
+      let attempts = await BlockedEmail.findOne({ email });
 
-      loginAttempts.set(email, newAttempts);
+      if (!attempts) {
+        attempts = await BlockedEmail.create({
+          email,
+          count: 1,
+        });
+      } else if (attempts.count < 4) {
+        attempts.count += 1;
+        await attempts.save();
+      }
 
-      // block after 3 attempts
-      if (newAttempts >= 3) {
-        await BlockedEmail.create({ email });
-        loginAttempts.delete(email);
+      if (attempts.count >= 3) {
+        attempts.blockedAt = new Date();
+        await attempts.save();
       }
 
       return new ErrorHandler(401, "invalid email or password")
@@ -94,15 +98,11 @@ const sendingOtpForLogIn = async (req, res) => {
         .send(res);
     }
 
-    // ===== PASSWORD CORRECT =====
-    loginAttempts.delete(email);
-
     await sendOtp({
       email,
       purpose: "login",
     });
 
-    // reset block if exists
     await BlockedEmail.deleteOne({ email });
 
     return new SuccessHandler(200, `verification code sent to ${email}`, {
@@ -114,7 +114,6 @@ const sendingOtpForLogIn = async (req, res) => {
       .send(res);
   }
 };
-
 //===============PASSWORD RESET OTP==============
 const sendingOtpForPassReset = async (req, res) => {
   try {

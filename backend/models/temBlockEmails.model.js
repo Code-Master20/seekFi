@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const blockSchema = new mongoose.Schema({
+  count: {
+    type: Number,
+    default: 0,
+  },
   email: {
     type: String,
     required: true,
