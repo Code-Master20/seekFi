@@ -11,8 +11,6 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEyeSlash } from "react-icons/fa6";
 
 export const LogIn = () => {
-  localStorage.removeItem("timeRemains");
-
   const { errorMessage } = useSelector((state) => state.auth);
 
   //===================Receiving credentials from input fields for sending to the backend====================
@@ -66,16 +64,34 @@ export const LogIn = () => {
   //========================sending inputted credentials to backend with a function==========================
   //===========================================handleOnSubmit================================================
 
-  const storedTime = Number(JSON.parse(localStorage.getItem("time-remains")));
-  const [countdown, setCountdown] = useState(storedTime || null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [path, setPath] = useState(null);
   const [timerIdArr, setTimerIdArr] = useState([]);
-  const [tries, setTries] = useState(
-    () => JSON.parse(localStorage.getItem("tryRemains")) ?? 3,
-  );
+  const [countdown, setCountdown] = useState(null);
+  const [hydrated, setHydrated] = useState(false);
+  const [tries, setTries] = useState(() => {
+    const storedTries = localStorage.getItem("tryRemains");
+    return storedTries ? JSON.parse(storedTries) : 3;
+  });
+
+  useEffect(() => {
+    localStorage.removeItem("timeRemains");
+  }, []);
+
+  useEffect(() => {
+    const storedTime = localStorage.getItem("time-remains");
+
+    if (storedTime) {
+      const parsed = Number(JSON.parse(storedTime));
+      setCountdown(parsed > 0 ? parsed : null);
+    } else {
+      setCountdown(null);
+    }
+
+    setHydrated(true);
+  }, []);
 
   async function handleOnSubmit(event) {
     event.preventDefault();
@@ -100,9 +116,13 @@ export const LogIn = () => {
 
       //toast.warn trigger if error is string
       if (typeof error === "string") {
-        toast.warn(error);
+        setTries((prev) => {
+          if (prev <= 0) return 0;
+          return prev - 1;
+        });
 
         if (error.includes("Too many failed attempts")) {
+          toast.warn(error);
           const match = error.match(/(\d+)m\s*(\d+)s/);
 
           if (match) {
@@ -110,17 +130,13 @@ export const LogIn = () => {
             const seconds = Number(match[2]);
             const totalSeconds = minutes * 60 + seconds;
             setCountdown(totalSeconds);
-
             localStorage.setItem("time-remains", JSON.stringify(totalSeconds));
             localStorage.setItem("tryRemains", JSON.stringify(0));
           }
 
           return;
         }
-        setTries((prev) => {
-          if (prev <= 0) return 0;
-          return prev - 1;
-        });
+        toast.warn(error);
 
         return;
       }
@@ -153,19 +169,64 @@ export const LogIn = () => {
   }
 
   //=================================countdoun for blocked log-in to un-lock=================================
+
+  const [tryPassReset, setTryPassReset] = useState(() => {
+    return JSON.parse(localStorage.getItem("tryPassReset")) || false;
+  });
+  const runCountRef = useRef(JSON.parse(localStorage.getItem("runCount")) || 0);
+
   useEffect(() => {
     localStorage.setItem("tryRemains", JSON.stringify(tries));
 
-    //showing user password-reset button three times before blocking the user for log-in with the same email
-    if (tries === 3) {
-    } else if (tries === 2) {
-    } else if (tries === 1) {
+    let timer;
+
+    if (tries === 2 && runCountRef.current === 0) {
+      timer = setTimeout(() => {
+        runCountRef.current += 1;
+        localStorage.setItem("runCount", JSON.stringify(runCountRef.current));
+        localStorage.setItem("tryPassReset", JSON.stringify(true));
+        setTryPassReset(true);
+      }, 1500);
     }
+
+    if (tries === 1 && runCountRef.current === 1) {
+      timer = setTimeout(() => {
+        runCountRef.current += 1;
+        localStorage.setItem("runCount", JSON.stringify(runCountRef.current));
+        localStorage.setItem("tryPassReset", JSON.stringify(true));
+        setTryPassReset(true);
+      }, 1500);
+    }
+
+    return () => clearTimeout(timer);
   }, [tries]);
 
+  // function to cancel password reset procedure
+  function resetCancel() {
+    localStorage.removeItem("tryPassReset");
+    runCountRef.current += 1;
+    setTryPassReset(false);
+  }
+
+  //tracking remains time of blocked log-in users
+  // async function trackTime() {
+  //   if (tries === 0) {
+  //     const time = await dispatch(logInOtpReceived(clientCredentials));
+
+  //     if(logInOtpReceived.rejected.match(time)){
+
+  //     }
+  //   }
+  // }
+
+  // trackTime();
+
   useEffect(() => {
+    if (countdown === null) return;
+
     if (countdown === 0) {
       localStorage.removeItem("time-remains");
+      localStorage.removeItem("runCount");
       localStorage.setItem("tryRemains", JSON.stringify(3));
       setTries(3);
       return;
@@ -173,16 +234,16 @@ export const LogIn = () => {
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
-        const updated = prev >= 0 ? prev - 1 : prev + 1;
+        const updated = prev - 1;
         localStorage.setItem("time-remains", JSON.stringify(updated));
         return updated;
       });
-    }, 1010);
+    }, 1000);
 
     return () => clearInterval(timer);
   }, [countdown]);
 
-  const minutes = countdown ? Math.floor(countdown / 60) : 0;
+  const minutes = countdown ? Math.floor(countdown / 60) : 30;
   const seconds = countdown ? countdown % 60 : 0;
 
   //========================================invalid input viewer handling====================================
@@ -231,6 +292,8 @@ export const LogIn = () => {
 
   //==========================loading viewing on every handleOnSubmit trigger==============================
   const email = "your email";
+  if (!hydrated) return null; // ✅ HERE (very important)
+
   if (loading) {
     return (
       <section className={styles["form-loading-state"]}>
@@ -255,7 +318,22 @@ export const LogIn = () => {
         </section>
       ) : (
         <section className={stylie["try-remains"]}>
-          <p>Try Remains : {tries}</p>
+          <p>
+            login blocked for {minutes}min :{seconds}sec for{" "}
+            {clientCredentials.email}
+          </p>
+        </section>
+      )}
+
+      {tryPassReset && (
+        <section className={stylie["try-pass-reset"]}>
+          <h1>if password forgotten, click on reset or else click on cancel</h1>
+          <div>
+            <button className={stylie["cancel"]} onClick={resetCancel}>
+              cancel
+            </button>
+            <button className={stylie["reset"]}>reset</button>
+          </div>
         </section>
       )}
 

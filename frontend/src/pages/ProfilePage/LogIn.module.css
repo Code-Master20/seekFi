@@ -40,3 +40,73 @@
   font-weight: 700;
   letter-spacing: 0.5px;
 }
+
+.try-pass-reset {
+  position: absolute;
+  z-index: 200;
+  width: 100vw;
+  min-height: 80vh;
+  background-color: aqua;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  row-gap: 6rem;
+}
+
+.try-pass-reset div {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: clamp(8rem, 4vw, 10rem);
+  justify-content: center;
+}
+
+.try-pass-reset div button {
+  border: none;
+  min-width: 8rem;
+  padding: 1rem 2rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: rgb(205, 202, 208);
+  font-weight: 600;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transition: outline 0.3s ease-in;
+}
+
+.try-pass-reset div button:hover {
+  outline: 3px solid rgb(162, 255, 0);
+}
+
+.cancel {
+  background-color: rgb(125, 117, 117);
+  transition:
+    background-color 0.3s ease-in,
+    color 0.3s ease-in;
+}
+
+.cancel:active {
+  background-color: rgb(246, 247, 247);
+  color: chocolate;
+  outline: none;
+}
+
+.reset {
+  background-color: rgb(12, 12, 102);
+  transition:
+    background-color 0.3s ease-in,
+    color 0.3s ease-in;
+}
+
+.reset:active {
+  background-color: rgb(19, 19, 230);
+  color: white;
+}
+
+.try-pass-reset h1 {
+  text-align: center;
+  color: white;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  text-shadow: 1px 2px 1.4px black;
+}
