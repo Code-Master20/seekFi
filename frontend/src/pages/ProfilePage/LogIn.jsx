@@ -121,19 +121,8 @@ export const LogIn = () => {
           return prev - 1;
         });
 
-        if (error.includes("Too many failed attempts")) {
-          toast.warn(error);
-          const match = error.match(/(\d+)m\s*(\d+)s/);
-
-          if (match) {
-            const minutes = Number(match[1]);
-            const seconds = Number(match[2]);
-            const totalSeconds = minutes * 60 + seconds;
-            setCountdown(totalSeconds);
-            localStorage.setItem("time-remains", JSON.stringify(totalSeconds));
-            localStorage.setItem("tryRemains", JSON.stringify(0));
-          }
-
+        if (tries && error.includes("Too many failed attempts")) {
+          toast.warn("invalid email or password!");
           return;
         }
         toast.warn(error);
@@ -169,7 +158,7 @@ export const LogIn = () => {
   }
 
   //=================================countdoun for blocked log-in to un-lock=================================
-
+  const [disable, setDisable] = useState(false);
   const [tryPassReset, setTryPassReset] = useState(() => {
     return JSON.parse(localStorage.getItem("tryPassReset")) || false;
   });
@@ -178,24 +167,26 @@ export const LogIn = () => {
   useEffect(() => {
     localStorage.setItem("tryRemains", JSON.stringify(tries));
 
+    tries === 0 ? trackTime() : tries;
+
     let timer;
 
-    if (tries === 2 && runCountRef.current === 0) {
+    if (tries === 2 && runCountRef.current < 1) {
       timer = setTimeout(() => {
         runCountRef.current += 1;
         localStorage.setItem("runCount", JSON.stringify(runCountRef.current));
         localStorage.setItem("tryPassReset", JSON.stringify(true));
         setTryPassReset(true);
-      }, 1500);
+      }, 500);
     }
 
-    if (tries === 1 && runCountRef.current === 1) {
+    if (tries === 1 && runCountRef.current < 3) {
       timer = setTimeout(() => {
         runCountRef.current += 1;
         localStorage.setItem("runCount", JSON.stringify(runCountRef.current));
         localStorage.setItem("tryPassReset", JSON.stringify(true));
         setTryPassReset(true);
-      }, 1500);
+      }, 500);
     }
 
     return () => clearTimeout(timer);
@@ -205,27 +196,39 @@ export const LogIn = () => {
   function resetCancel() {
     localStorage.removeItem("tryPassReset");
     runCountRef.current += 1;
+    localStorage.setItem("runCount", JSON.stringify(runCountRef.current));
     setTryPassReset(false);
   }
 
-  //tracking remains time of blocked log-in users
-  // async function trackTime() {
-  //   if (tries === 0) {
-  //     const time = await dispatch(logInOtpReceived(clientCredentials));
+  // tracking remains time of blocked log-in users
 
-  //     if(logInOtpReceived.rejected.match(time)){
+  async function trackTime() {
+    if (tries === 0) {
+      setDisable(true);
+      const time = await dispatch(logInOtpReceived(clientCredentials));
 
-  //     }
-  //   }
-  // }
-
-  // trackTime();
+      if (logInOtpReceived.rejected.match(time)) {
+        let error = time.payload.message;
+        if (error.includes("Too many failed attempts")) {
+          let match = error.match(/(\d+)m\s*(\d+)s/);
+          if (match) {
+            let minutes = Number(match[1]);
+            let seconds = Number(match[2]);
+            let totalSeconds = minutes * 60 + seconds;
+            setCountdown(totalSeconds);
+          }
+        }
+      }
+    }
+  }
 
   useEffect(() => {
     if (countdown === null) return;
 
     if (countdown === 0) {
-      localStorage.removeItem("time-remains");
+      setDisable(false);
+      console.clear();
+
       localStorage.removeItem("runCount");
       localStorage.setItem("tryRemains", JSON.stringify(3));
       setTries(3);
@@ -233,18 +236,14 @@ export const LogIn = () => {
     }
 
     const timer = setInterval(() => {
-      setCountdown((prev) => {
-        const updated = prev - 1;
-        localStorage.setItem("time-remains", JSON.stringify(updated));
-        return updated;
-      });
-    }, 1000);
+      trackTime();
+    }, 500);
 
     return () => clearInterval(timer);
   }, [countdown]);
 
-  const minutes = countdown ? Math.floor(countdown / 60) : 30;
-  const seconds = countdown ? countdown % 60 : 0;
+  let minutes = countdown ? Math.floor(countdown / 60) : 30;
+  let seconds = countdown ? countdown % 60 : 0;
 
   //========================================invalid input viewer handling====================================
   //================================================onFocusTrigger===========================================
@@ -312,14 +311,14 @@ export const LogIn = () => {
       ) : countdown > 0 ? (
         <section className={stylie["try-remains"]}>
           <p>
-            login blocked for {minutes}min :{seconds}sec for{" "}
+            log-in session blocked for {minutes}min :{seconds}sec for{" "}
             {clientCredentials.email}
           </p>
         </section>
       ) : (
         <section className={stylie["try-remains"]}>
           <p>
-            login blocked for {minutes}min :{seconds}sec for{" "}
+            log-in session blocked for {minutes}min :{seconds}sec for{" "}
             {clientCredentials.email}
           </p>
         </section>
@@ -332,7 +331,12 @@ export const LogIn = () => {
             <button className={stylie["cancel"]} onClick={resetCancel}>
               cancel
             </button>
-            <button className={stylie["reset"]}>reset</button>
+            <button
+              className={stylie["reset"]}
+              onClick={() => navigate("/reset-password-with-otp")}
+            >
+              reset
+            </button>
           </div>
         </section>
       )}
@@ -352,6 +356,7 @@ export const LogIn = () => {
                   onChange={handleOnChange}
                   value={clientCredentials.email}
                   onFocus={onFocusTrigger}
+                  disabled={disable}
                 />
                 {path && path === "email" && errorMessage && (
                   <InvalidInputTracker
@@ -386,6 +391,7 @@ export const LogIn = () => {
                   onChange={handleOnChange}
                   value={clientCredentials.password}
                   onFocus={onFocusTrigger}
+                  disabled={disable}
                 />
                 {path && path === "password" && errorMessage && (
                   <InvalidInputTracker
@@ -408,9 +414,6 @@ export const LogIn = () => {
                 </button>
               </div>
             </form>
-            <button onClick={() => navigate("/reset-password-with-otp")}>
-              reset-pass
-            </button>
           </div>
         </article>
       </section>
