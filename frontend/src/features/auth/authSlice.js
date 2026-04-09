@@ -157,8 +157,17 @@ const authSlice = createSlice({
       .addCase(resetPassViaOldPass.pending, (state, action) => {
         state.formLoading = true;
       })
-      .addCase(resetPassViaOldPass.fulfilled, (state, action) => {})
-      .addCase(resetPassViaOldPass.rejected, (state, action) => {})
+      .addCase(resetPassViaOldPass.fulfilled, (state, action) => {
+        state.formLoading = false;
+        state.successMessage = action.payload.message;
+        state.errorMessage = null;
+      })
+      .addCase(resetPassViaOldPass.rejected, (state, action) => {
+        state.formLoading = false;
+        state.successMessage = null;
+        state.errorMessage = action.payload.message;
+        state.status = action.payload.status;
+      })
 
       // ====================== UPLOAD PROFILE PIC ======================
       .addCase(uploadProfilePic.pending, (state) => {

@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
+import { useDispatch } from "react-redux";
 import styles from "./EditPassword.module.css";
 import { resetPassViaOldPass } from "../../features/auth/authThunks";
 
 export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   //============if not remembered old password toggle to another page to reset password with otp==========
   //========================================passRememberedNot=======================================
   function passRememberedNot() {
@@ -52,6 +54,16 @@ export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
 
   async function handleOnSubmit(event) {
     event.preventDefault();
+
+    const resultAction = await dispatch(resetPassViaOldPass(clientCredentials));
+
+    if (resetPassViaOldPass.rejected.match(resultAction)) {
+      console.log(resultAction.payload);
+    }
+
+    if (resetPassViaOldPass.fulfilled.match(resultAction)) {
+      // console.log(resultAction.payload);
+    }
   }
 
   //=========================seeing input fields' credentials specially password type's=================
@@ -119,7 +131,9 @@ export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
             />
           </fieldset>
 
-          <button className={styles.button}>exchange Password</button>
+          <button className={styles.button} type="submit">
+            exchange Password
+          </button>
 
           <p className={styles.link} onClick={() => navigate("/login")}>
             Don't want to alter your old password? Go back to login

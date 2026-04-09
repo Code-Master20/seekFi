@@ -145,18 +145,28 @@ export const otpVerifiedAndLoggedIn = createAsyncThunk(
 );
 
 export const resetPassViaOldPass = createAsyncThunk(
-  "auth/passResetViaOldPass",
+  "auth/pass-reset-via-old-pass",
   async (clientCredentials, thunkAPI) => {
     try {
       const response = await api.post(
-        "/reset-password-with-old-password",
+        "/auth/reset-password-with-old-password",
         clientCredentials,
       );
 
-      console.log(response);
       return response.data;
     } catch (error) {
-      console.log(error.response);
+      const brokenResponse = {
+        message: "",
+        success: null,
+        status: null,
+      };
+
+      const { message, success } = error.response?.data;
+      const { status } = error.response;
+      brokenResponse.message = message;
+      brokenResponse.success = success;
+      brokenResponse.status = status;
+      return thunkAPI.rejectWithValue(brokenResponse);
     }
   },
 );
