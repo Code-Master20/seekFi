@@ -38,8 +38,12 @@ async function recordFailedAttempt(email) {
   if (attempt.count >= 5) {
     await PasswordChangeAttempt.create({
       email,
+      lockUntil: new Date(Date.now() + 30 * 60 * 1000), // 🔥 dynamic
       expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 min block
+      
     });
+
+    
 
     attempt.count = 0;
   }
