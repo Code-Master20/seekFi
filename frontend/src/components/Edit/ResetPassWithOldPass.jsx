@@ -3,6 +3,8 @@ import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import styles from "./EditPassword.module.css";
 import { resetPassViaOldPass } from "../../features/auth/authThunks";
+import { InvalidInputTracker } from "../InvalidInputTracker/InvalidInputTracker";
+import { toast } from "react-toastify";
 
 export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
   const navigate = useNavigate();
@@ -51,6 +53,8 @@ export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
 
   //====================receiving credentials from handleOnChange function for sending to backend===========
   //=========================================handleOnSubmit=============================================
+  const [inputErrorString, setInputErrorString] = useState("");
+  const [path, setPath] = useState(null);
 
   async function handleOnSubmit(event) {
     event.preventDefault();
@@ -58,7 +62,22 @@ export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
     const resultAction = await dispatch(resetPassViaOldPass(clientCredentials));
 
     if (resetPassViaOldPass.rejected.match(resultAction)) {
-      console.log(resultAction.payload);
+      const message = resultAction?.payload?.message;
+
+      if (
+        message &&
+        typeof message === "object" &&
+        Array.isArray(message.path) &&
+        message?.path.length > 0
+      ) {
+        console.log(message);
+        setPath(message?.path[0]);
+        setInputErrorString(message?.msg);
+      } else {
+        setPath(null);
+        setInputErrorString("");
+        toast.warn(message);
+      }
     }
 
     if (resetPassViaOldPass.fulfilled.match(resultAction)) {
@@ -115,6 +134,12 @@ export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
               onFocus={viewInputField}
               onBlur={hideInputField}
             />
+            {path === "password" && (
+              <InvalidInputTracker
+                className={styles.errorTracker}
+                inputErrorString={inputErrorString}
+              />
+            )}
           </fieldset>
 
           <fieldset className={styles.fieldset}>
@@ -129,6 +154,12 @@ export const ResetPassWithOldPass = ({ setOtpResetTrigger }) => {
               onFocus={viewInputField}
               onBlur={hideInputField}
             />
+            {path === "newPassword" && (
+              <InvalidInputTracker
+                className={styles.errorTracker}
+                inputErrorString={inputErrorString}
+              />
+            )}
           </fieldset>
 
           <button className={styles.button} type="submit">
