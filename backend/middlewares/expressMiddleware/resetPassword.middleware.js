@@ -11,12 +11,12 @@ async function checkIfBlocked(email, res) {
 
   if (blocked) {
     const minutesLeft = Math.ceil(
-      (blocked.expiresAt - new Date()) / (1000 * 60)
+      (blocked.expiresAt - new Date()) / (1000 * 60),
     );
 
     new ErrorHandler(
       403,
-      `Too many attempts. Try again after ${minutesLeft} minutes`
+      `Too many attempts. Try again after ${minutesLeft} minutes`,
     ).send(res);
 
     return true; // stop execution
@@ -40,10 +40,7 @@ async function recordFailedAttempt(email) {
       email,
       lockUntil: new Date(Date.now() + 30 * 60 * 1000), // 🔥 dynamic
       expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 min block
-      
     });
-
-    
 
     attempt.count = 0;
   }
@@ -54,7 +51,6 @@ async function recordFailedAttempt(email) {
 async function resetAttempts(email) {
   await AttemptCount.deleteOne({ email });
 }
-
 
 const resetPasswordWithOldPassword = async (req, res, next) => {
   try {
@@ -71,7 +67,7 @@ const resetPasswordWithOldPassword = async (req, res, next) => {
     if (!userExisted) {
       await recordFailedAttempt(email);
 
-      return new ErrorHandler(404, "Account not found")
+      return new ErrorHandler(404, "email or password not matched")
         .log("password reset", "email not registered")
         .send(res);
     }
@@ -83,7 +79,7 @@ const resetPasswordWithOldPassword = async (req, res, next) => {
     if (!isMatchOldPassword) {
       await recordFailedAttempt(email);
 
-      return new ErrorHandler(401, "Old password not correct")
+      return new ErrorHandler(401, "email or password not matched")
         .log("password mismatch", "user entered wrong old password")
         .send(res);
     }

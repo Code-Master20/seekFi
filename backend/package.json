@@ -1,14 +1,10 @@
 {
-  "name": "seek-fint",
+  "name": "globme",
   "version": "1.0.0",
-  "description": "seekFint:-a place where people seek information together and make friends",
+  "description": "globme:-is a place where people seek information together and make friends world-wise",
   "keywords": [
-    "seekFint",
-    "seekfint",
-    "SEEKFINT",
-    "sEekFiNT",
-    "SeekFint",
-    "SEEKfint"
+    "glob-me",
+    "globme"
   ],
   "license": "ISC",
   "author": "Sahidur Miah",
