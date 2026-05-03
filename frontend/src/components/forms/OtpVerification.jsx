@@ -1,6 +1,6 @@
 import style from "./OtpVerification.module.css";
-import { useEffect, useState, useRef } from "react";
-import { Navigate, replace, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "../../pages/profile/LogInSignUp.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,15 +8,14 @@ import {
   otpVerifiedAndSignedUp,
 } from "../../features/auth/authThunks";
 import { toast } from "react-toastify";
-import { resetOtpLockState } from "../../features/auth/authSlice";
 import { InvalidInputTracker } from "./InvalidInputTracker";
+import globMe from "../../assets/globme.png";
 
 export const OtpVerification = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { errorMessage, id } = useSelector((state) => state.auth);
-  //=======================receiving credentials from input fields for sending to backend====================
-  //============================================handleOnChange===============================================
+  const { errorMessage } = useSelector((state) => state.auth);
+
   const storedUser = JSON.parse(localStorage.getItem("user")) || null;
   const [clientCredentials, setClientCredentials] = useState({
     email: storedUser ? storedUser.email : "",
@@ -26,33 +25,29 @@ export const OtpVerification = () => {
   const debounceRef = useRef(null);
 
   function handleOnChange(event) {
-    let { name, value } = event.target;
+    const { name, value } = event.target;
 
-    // update input instantly
     setClientCredentials((prev) => ({
       ...prev,
       [name]: value.trim(),
     }));
 
-    // debounce only localStorage
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
     debounceRef.current = setTimeout(() => {
-      const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+      const existingUser = JSON.parse(localStorage.getItem("user")) || {};
       localStorage.setItem(
         "user",
         JSON.stringify({
-          ...storedUser,
+          ...existingUser,
           otp: value.trim(),
         }),
       );
     }, 1000);
   }
 
-  //========================sending inputted credentials to backend with a function==========================
-  //=======================================handleOnSubmit====================================================
   const storedTries = JSON.parse(localStorage.getItem("tries")) || 5;
   const storedTimes = JSON.parse(localStorage.getItem("timeRemains")) || 300;
 
@@ -92,13 +87,12 @@ export const OtpVerification = () => {
     }
 
     if (typeof error === "string" && error.length >= 25) {
-      // removing otp from localStorage before redirecting user to prev page
       delete storedUser?.otp;
       localStorage.setItem("user", JSON.stringify(storedUser));
 
       toast.warn(error);
       setRedirect((prev) => !prev);
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         navigate(`/${purpose}`, { replace: true });
       }, 4000);
     }
@@ -108,7 +102,6 @@ export const OtpVerification = () => {
     event.preventDefault();
     setLoading(true);
 
-    //verifying otp for log-in success
     if (purpose === "login") {
       const resultAction = await dispatch(
         otpVerifiedAndLoggedIn(clientCredentials),
@@ -123,12 +116,10 @@ export const OtpVerification = () => {
         setLoading(false);
         localStorage.removeItem("user");
         localStorage.removeItem("timeRemains");
-        const success = resultAction.payload?.message;
-        toast.success(success);
+        toast.success(resultAction.payload?.message);
       }
     }
 
-    //verifying otp for sign-up success
     if (purpose === "signup") {
       const resultAction = await dispatch(
         otpVerifiedAndSignedUp(clientCredentials),
@@ -141,15 +132,12 @@ export const OtpVerification = () => {
 
       if (otpVerifiedAndSignedUp.fulfilled.match(resultAction)) {
         setLoading(false);
-        const success = resultAction.payload?.message;
-        toast.success(success);
+        toast.success(resultAction.payload?.message);
         localStorage.removeItem("user");
         localStorage.removeItem("timeRemains");
       }
     }
   }
-
-  //====================redirecting user if opt is not valid or otp expired==================================
 
   useEffect(() => {
     if (redirect) {
@@ -162,7 +150,7 @@ export const OtpVerification = () => {
       delete storedUser?.otp;
       localStorage.setItem("user", JSON.stringify(storedUser));
       localStorage.removeItem("timeRemains");
-      toast.warn("otp expired! please request a new otp");
+      toast.warn("OTP expired. Please request a new code.");
       setRedirect((prev) => !prev);
       setTimeout(() => {
         if (purpose) {
@@ -182,98 +170,139 @@ export const OtpVerification = () => {
 
   const min = Math.floor(timeRemains / 60);
   const sec = timeRemains % 60;
-
   const minutes = min.toString().padStart(2, "0");
   const seconds = sec.toString().padStart(2, "0");
+  const formattedTime =
+    min < 1 ? `${minutes}:${seconds} sec` : `${minutes}:${seconds} min`;
 
-  let formatedTime =
-    min < 1 ? minutes + ":" + seconds + "sec" : minutes + ":" + seconds + "min";
-
-  //========================================invalid input viewer handling====================================
-  //===============================================onFocusTrigger============================================
   function onFocusTrigger(event) {
     if (event.target.name === path) {
       setPath(null);
     }
   }
 
-  //==========================loading viewing on every handleOnSubmit trigger==============================
-
   if (loading) {
     return (
-      <section className={styles["form-loading-state"]}>
-        <h1>verifying otp....</h1>
-        <span className={style["loader"]}></span>;
+      <section className={styles["auth-loading-state"]}>
+        <div className={styles["auth-loading-card"]}>
+          <img src={globMe} alt="globMe" className={styles["loading-logo"]} />
+          <p className={styles["loading-kicker"]}>Verifying code</p>
+          <h1>Checking your OTP and preparing your account access.</h1>
+          <span className={style["loader"]}></span>
+        </div>
       </section>
     );
   }
 
-  //=====================================redirecting viewing on screen for user==============================
   if (redirect) {
     return (
-      <section className={styles["form-loading-state"]}>
-        <h1>returning to {purpose || "previous"} page again</h1>
+      <section className={styles["auth-loading-state"]}>
+        <div className={styles["auth-loading-card"]}>
+          <img src={globMe} alt="globMe" className={styles["loading-logo"]} />
+          <p className={styles["loading-kicker"]}>Redirecting</p>
+          <h1>Returning to the {purpose || "previous"} page.</h1>
+        </div>
       </section>
     );
   }
 
   return (
-    <>
-      <main className={styles["main-container-first-otp"]}>
-        <section className={style["count-down"]}>
-          <p>Time Remains</p>
-          <h1>{formatedTime}</h1>
-        </section>
-        <section className={styles["main-container-second"]}>
-          <article className={style["try-remains"]}>
-            <p>Try Remains</p>
-            <h1>{tries}</h1>
-          </article>
-          <article className={styles["main-container-third"]}>
-            <h1 className={styles["login-main-heading"]}>please verify otp</h1>
-            <div className={styles["login-form-container"]}>
-              <form autoComplete="off" onSubmit={handleOnSubmit}>
-                <div className={styles["input-elm"]}>
-                  <label htmlFor="email">Email :</label>
-                  <input
-                    id="email"
-                    type="text"
-                    name="email"
-                    placeholder="your email"
-                    value={clientCredentials.email}
-                    disabled
-                  />
-                </div>
-
-                <div className={styles["input-elm"]}>
-                  <label htmlFor="otp">Otp :</label>
-                  <input
-                    id="otp"
-                    type="text"
-                    name="otp"
-                    placeholder="Enter verification code"
-                    onChange={handleOnChange}
-                    value={clientCredentials.otp}
-                    onFocus={onFocusTrigger}
-                  />
-                  {path && path === "otp" && errorMessage && (
-                    <InvalidInputTracker
-                      className={styles["invalid-input-tracker"]}
-                      inputErrorString={errorMessage}
-                    />
-                  )}
-                </div>
-
-                <div className={styles["btn-container"]}>
-                  <button className={styles["log-in-btn"]} type="submit">
-                    verify code
-                  </button>
-                </div>
-              </form>
+    <main className={styles["auth-page"]}>
+      <section className={styles["auth-shell"]}>
+        <aside className={styles["auth-brand-panel"]}>
+          <div className={styles["brand-badge"]}>Final step</div>
+          <img src={globMe} alt="globMe" className={styles["brand-logo"]} />
+          <h1 className={styles["brand-title"]}>Confirm your email to continue.</h1>
+          <p className={styles["brand-copy"]}>
+            We sent a one-time code to your email. Enter it below before the
+            timer runs out to complete access.
+          </p>
+          <div className={styles["brand-highlights"]}>
+            <div>
+              <span>Time remaining</span>
+              <p>{formattedTime}</p>
             </div>
-          </article>
+            <div>
+              <span>Tries left</span>
+              <p>{tries}</p>
+            </div>
+          </div>
+        </aside>
+
+        <section className={styles["auth-card"]}>
+          <div className={styles["auth-card-header"]}>
+            <p className={styles["auth-kicker"]}>Verification</p>
+            <h2 className={styles["auth-heading"]}>Enter your OTP</h2>
+            <p className={styles["auth-subcopy"]}>
+              Use the email code for {clientCredentials.email || "your account"}.
+              If the code expires, request a fresh sign-in attempt.
+            </p>
+          </div>
+
+          <div className={style["otp-status-row"]}>
+            <article className={style["status-chip"]}>
+              <span>Time left</span>
+              <strong>{formattedTime}</strong>
+            </article>
+            <article className={style["status-chip"]}>
+              <span>Attempts</span>
+              <strong>{tries}</strong>
+            </article>
+          </div>
+
+          <div className={styles["login-form-container"]}>
+            <form autoComplete="off" onSubmit={handleOnSubmit}>
+              <div className={styles["input-elm"]}>
+                <label htmlFor="email">Email address</label>
+                <input
+                  id="email"
+                  type="text"
+                  name="email"
+                  placeholder="your email"
+                  value={clientCredentials.email}
+                  disabled
+                />
+              </div>
+
+              <div className={styles["input-elm"]}>
+                <label htmlFor="otp">Verification code</label>
+                <input
+                  id="otp"
+                  type="text"
+                  name="otp"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  placeholder="Enter the 8-digit code"
+                  onChange={handleOnChange}
+                  value={clientCredentials.otp}
+                  onFocus={onFocusTrigger}
+                />
+                {path && path === "otp" && errorMessage && (
+                  <InvalidInputTracker
+                    className={styles["invalid-input-tracker"]}
+                    inputErrorString={errorMessage}
+                  />
+                )}
+              </div>
+
+              <div className={styles["btn-container"]}>
+                <button
+                  className={styles["primary-btn"]}
+                  type="submit"
+                  disabled={!clientCredentials.otp.trim()}
+                >
+                  Verify code
+                </button>
+              </div>
+
+              <p className={styles["form-footer-note"]}>
+                Keep this tab open while verifying so your login or sign-up
+                session stays in sync.
+              </p>
+            </form>
+          </div>
         </section>
-      </main>
-    </>
+      </section>
+    </main>
   );
 };

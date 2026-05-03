@@ -1,112 +1,112 @@
-.log-in-btn {
-  text-align: center;
-  background-color: chocolate;
-  border: none;
-  padding: 0.2rem 0.4rem;
-  color: white;
-  border-radius: 0.5rem;
-  font-size: clamp(1.5rem, 4vw, 3rem);
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    box-shadow 0.3s ease-out,
-    transform 0.3s ease-out;
-  position: absolute;
-  right: 0;
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(26, 60, 96, 0.08);
+  border: 1px solid rgba(26, 60, 96, 0.08);
+  color: #21364f;
 }
 
-.log-in-btn:hover {
-  box-shadow: 0px 0px 8px 0.2px rgb(42, 254, 0);
-}
-.log-in-btn:active {
-  transform: scale(1.02);
+.status-banner strong {
+  font-size: 1.2rem;
+  color: #112338;
 }
 
-.try-remains {
+.status-banner p {
   width: 100%;
-  min-height: 10rem;
-  position: absolute;
-  top: clamp(0.5rem, 4vw, 1.5rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: end;
+  color: #617489;
+  font-size: 0.9rem;
 }
 
-.try-remains p {
-  text-align: center;
-  color: white;
-  font-size: clamp(2rem, 4vw, 4rem);
-  font-weight: 700;
-  letter-spacing: 0.5px;
+.status-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #c0571f;
 }
 
-.try-pass-reset {
-  position: absolute;
-  z-index: 200;
-  width: 100vw;
-  min-height: 80vh;
-  background-color: aqua;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  row-gap: 6rem;
+.status-warning {
+  background: rgba(197, 99, 23, 0.08);
+  border-color: rgba(197, 99, 23, 0.14);
 }
 
-.try-pass-reset div {
-  width: 100%;
+.reset-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  padding: 1.25rem;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  column-gap: clamp(8rem, 4vw, 10rem);
   justify-content: center;
+  background: rgba(6, 18, 31, 0.66);
+  backdrop-filter: blur(12px);
 }
 
-.try-pass-reset div button {
-  border: none;
-  min-width: 8rem;
-  padding: 1rem 2rem;
-  font-size: clamp(2rem, 4vw, 3rem);
-  color: rgb(205, 202, 208);
-  font-weight: 600;
-  border-radius: 1.5rem;
+.reset-overlay-card {
+  width: min(38rem, 100%);
+  padding: clamp(1.5rem, 4vw, 2.4rem);
+  border-radius: 28px;
+  background: #f8fbff;
+  box-shadow: 0 32px 70px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  text-align: center;
+}
+
+.overlay-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #cc5e23;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.reset-overlay-card h1 {
+  color: #13253d;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.25;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.overlay-actions {
+  display: flex;
+  gap: 0.9rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.overlay-actions button {
+  min-width: 11rem;
+  min-height: 3.4rem;
+  padding: 0.8rem 1.1rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.98rem;
   cursor: pointer;
-  transition: outline 0.3s ease-in;
-}
-
-.try-pass-reset div button:hover {
-  outline: 3px solid rgb(162, 255, 0);
+  border: none;
 }
 
 .cancel {
-  background-color: rgb(125, 117, 117);
-  transition:
-    background-color 0.3s ease-in,
-    color 0.3s ease-in;
-}
-
-.cancel:active {
-  background-color: rgb(246, 247, 247);
-  color: chocolate;
-  outline: none;
+  background: #e7edf4;
+  color: #1f3650;
 }
 
 .reset {
-  background-color: rgb(12, 12, 102);
-  transition:
-    background-color 0.3s ease-in,
-    color 0.3s ease-in;
+  background: linear-gradient(135deg, #f27f2d 0%, #cb4c1f 100%);
+  color: #fff;
 }
 
-.reset:active {
-  background-color: rgb(19, 19, 230);
-  color: white;
-}
+@media (max-width: 560px) {
+  .overlay-actions {
+    flex-direction: column;
+  }
 
-.try-pass-reset h1 {
-  text-align: center;
-  color: white;
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
-  text-shadow: 1px 2px 1.4px black;
+  .overlay-actions button {
+    width: 100%;
+  }
 }

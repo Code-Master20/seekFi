@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./LogInSignUp.module.css";
-import style from "./LogIn.module.css";
+import style from "./SignUp.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signUpOtpReceived } from "../../features/auth/authThunks";
@@ -8,14 +8,13 @@ import { InvalidInputTracker } from "../../components/forms/InvalidInputTracker"
 import { toast } from "react-toastify";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import globMe from "../../assets/globme.png";
 
 export const SignUp = () => {
   localStorage.removeItem("timeRemains");
   const navigate = useNavigate();
   const { errorMessage } = useSelector((state) => state.auth);
 
-  //===================Receiving credentials from input fields for sending to the backend====================
-  //==========================================handleOnChange=================================================
   const debounceRef = useRef({});
 
   const storedUser = JSON.parse(localStorage.getItem("user")) || null;
@@ -48,16 +47,15 @@ export const SignUp = () => {
         [name]: formattedValue,
       }));
 
-      //storing input field's credentials to localStorage
       setTimeout(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user")) || {
+        const existingUser = JSON.parse(localStorage.getItem("user")) || {
           purpose: "signup",
         };
 
         localStorage.setItem(
           "user",
           JSON.stringify({
-            ...storedUser,
+            ...existingUser,
             [name]: formattedValue,
           }),
         );
@@ -65,8 +63,6 @@ export const SignUp = () => {
     }, 5);
   }
 
-  //===========================sending inputted credentials to backend with a function=======================
-  //==============================================handleOnSubmit=============================================
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [path, setPath] = useState(null);
@@ -76,7 +72,6 @@ export const SignUp = () => {
     event.preventDefault();
     setLoading(true);
 
-    //trimming only username just before sending to backend
     const trimCredentials = {
       ...clientCredentials,
       username: clientCredentials.username.trim(),
@@ -96,7 +91,6 @@ export const SignUp = () => {
       setLoading(false);
       const error = resultAction.payload?.message;
 
-      //auto vanish for timer ids except the last one, for invalid input pop-up
       const timer = setTimeout(() => {
         setPath(null);
       }, 5000);
@@ -105,10 +99,6 @@ export const SignUp = () => {
         for (let index = 0; index < timerIdArr.length; index++) {
           clearTimeout(timerIdArr[index]);
         }
-      }
-
-      if (typeof error === "string") {
-        console.log("string error");
       }
 
       if (
@@ -122,26 +112,19 @@ export const SignUp = () => {
 
     if (signUpOtpReceived.fulfilled.match(resultAction)) {
       setLoading(false);
-      const success = resultAction.payload?.message;
-      toast.success(success);
-
+      toast.success(resultAction.payload?.message);
       navigate("/verify-otp", { replace: true });
     }
   }
 
-  //========================================invalid input viewer handling====================================
-  //===============================================onFocusTrigger============================================
   function onFocusTrigger(event) {
     if (event.target.name === path) {
       setPath(null);
     }
   }
 
-  //==============================================password viewer============================================
-  //==============================================handleInputView============================================
   const [view, setView] = useState(false);
   const timerRef = useRef(null);
-
   const inputType = view ? "text" : "password";
 
   function handleInputView() {
@@ -166,42 +149,72 @@ export const SignUp = () => {
     };
   }, [view]);
 
-  //=========================================navigate to log in page=========================================
-  //=============================================handleNavigate==============================================
   function handleNavigate() {
     localStorage.removeItem("user");
     navigate("/login", { replace: true });
   }
 
-  //==========================loading viewing on every handleOnSubmit trigger==============================
-  const email = "your email";
+  const loadingEmail = "your email";
   if (loading) {
     return (
-      <section className={styles["form-loading-state"]}>
-        <h1>sending verification code to {clientCredentials.email || email}</h1>
+      <section className={styles["auth-loading-state"]}>
+        <div className={styles["auth-loading-card"]}>
+          <img src={globMe} alt="globMe" className={styles["loading-logo"]} />
+          <p className={styles["loading-kicker"]}>Creating your account</p>
+          <h1>Sending a verification code to {clientCredentials.email || loadingEmail}</h1>
+          <span className={styles["loading-glow"]}></span>
+        </div>
       </section>
     );
   }
 
   return (
-    <main className={styles["main-container-first"]}>
-      <section className={styles["main-container-second"]}>
-        <article className={styles["main-container-third"]}>
-          <h1 className={styles["login-main-heading"]}>create account</h1>
+    <main className={styles["auth-page"]}>
+      <section className={styles["auth-shell"]}>
+        <aside className={styles["auth-brand-panel"]}>
+          <div className={styles["brand-badge"]}>Join globMe</div>
+          <img src={globMe} alt="globMe" className={styles["brand-logo"]} />
+          <h1 className={styles["brand-title"]}>Build a profile with a wider horizon.</h1>
+          <p className={styles["brand-copy"]}>
+            Create your account to discover nearby people, follow stories, and
+            turn shared curiosity into new friendships.
+          </p>
+          <div className={styles["brand-highlights"]}>
+            <div>
+              <span>Easy onboarding</span>
+              <p>Just a username, email, password, and one verification step.</p>
+            </div>
+            <div>
+              <span>Privacy first</span>
+              <p>Your account is activated only after confirming your email.</p>
+            </div>
+          </div>
+        </aside>
+
+        <section className={styles["auth-card"]}>
+          <div className={styles["auth-card-header"]}>
+            <p className={styles["auth-kicker"]}>New here?</p>
+            <h2 className={styles["auth-heading"]}>Create your account</h2>
+            <p className={styles["auth-subcopy"]}>
+              Choose a recognizable username and a strong password. We will send
+              an OTP to verify your email.
+            </p>
+          </div>
+
           <div className={styles["login-form-container"]}>
             <form onSubmit={handleOnSubmit}>
               <div className={styles["input-elm"]}>
-                <label htmlFor="username">Username :</label>
+                <label htmlFor="username">Username</label>
                 <input
                   id="username"
                   type="text"
                   name="username"
-                  placeholder="your username"
+                  autoComplete="username"
+                  placeholder="Choose a username"
                   onChange={handleOnChange}
                   value={clientCredentials.username}
                   onFocus={onFocusTrigger}
                 />
-
                 {path && path === "username" && errorMessage && (
                   <InvalidInputTracker
                     className={styles["invalid-input-tracker"]}
@@ -211,12 +224,14 @@ export const SignUp = () => {
               </div>
 
               <div className={styles["input-elm"]}>
-                <label htmlFor="email">Email :</label>
+                <label htmlFor="email">Email address</label>
                 <input
                   id="email"
-                  type="text"
+                  type="email"
                   name="email"
-                  placeholder="your email"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder="name@example.com"
                   onChange={handleOnChange}
                   value={clientCredentials.email}
                   onFocus={onFocusTrigger}
@@ -229,30 +244,26 @@ export const SignUp = () => {
                 )}
               </div>
 
-              <div
-                className={`${styles["input-elm"]} ${styles["password-input"]}`}
-              >
-                {view ? (
-                  <span
-                    className={styles["view-password"]}
-                    onClick={handleInputView}
-                  >
+              <div className={styles["input-elm"]}>
+                <label htmlFor="password">Password</label>
+                <button
+                  type="button"
+                  className={styles["password-toggle"]}
+                  onClick={handleInputView}
+                  aria-label={view ? "Hide password" : "Show password"}
+                >
+                  {view ? (
                     <MdOutlineRemoveRedEye className={styles["eye"]} />
-                  </span>
-                ) : (
-                  <span
-                    className={styles["view-password"]}
-                    onClick={handleInputView}
-                  >
+                  ) : (
                     <FaRegEyeSlash className={styles["eye"]} />
-                  </span>
-                )}
-                <label htmlFor="password">Password :</label>
+                  )}
+                </button>
                 <input
                   id="password"
                   type={inputType}
                   name="password"
-                  placeholder="your password"
+                  autoComplete="new-password"
+                  placeholder="Create a password"
                   onChange={handleOnChange}
                   value={clientCredentials.password}
                   onFocus={onFocusTrigger}
@@ -266,20 +277,33 @@ export const SignUp = () => {
               </div>
 
               <div className={styles["btn-container"]}>
-                <button className={`${styles["sign-up-btn"]} `} type="submit">
-                  sign-up
+                <button
+                  className={styles["primary-btn"]}
+                  type="submit"
+                  disabled={
+                    !clientCredentials.username.trim() ||
+                    !clientCredentials.email.trim() ||
+                    !clientCredentials.password.trim()
+                  }
+                >
+                  Send verification code
                 </button>
                 <button
-                  className={style["log-in-btn"]}
+                  className={style["secondary-btn"]}
                   type="button"
                   onClick={handleNavigate}
                 >
-                  log-in
+                  Back to log in
                 </button>
               </div>
+
+              <p className={styles["form-footer-note"]}>
+                Your account stays inactive until the verification code is
+                confirmed.
+              </p>
             </form>
           </div>
-        </article>
+        </section>
       </section>
     </main>
   );

@@ -9,13 +9,12 @@ import { InvalidInputTracker } from "../../components/forms/InvalidInputTracker"
 import { toast } from "react-toastify";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import globMe from "../../assets/globme.png";
 
 export const LogIn = () => {
   const { errorMessage } = useSelector((state) => state.auth);
 
-  //===================Receiving credentials from input fields for sending to the backend====================
-  //===============================================handleOnChange============================================
-  const storedUser = JSON.parse(localStorage.getItem("user")) || null; //extracting existing storedUser from localStorage
+  const storedUser = JSON.parse(localStorage.getItem("user")) || null;
 
   const [clientCredentials, setClientCredentials] = useState({
     email: storedUser ? storedUser.email : "",
@@ -45,24 +44,20 @@ export const LogIn = () => {
         [name]: formattedValue,
       }));
 
-      //storing input field's credentials to localStorage
       setTimeout(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user")) || {
+        const existingUser = JSON.parse(localStorage.getItem("user")) || {
           purpose: "login",
         };
         localStorage.setItem(
           "user",
           JSON.stringify({
-            ...storedUser,
+            ...existingUser,
             [name]: formattedValue,
           }),
         );
       }, 1);
     }, 5);
   }
-
-  //========================sending inputted credentials to backend with a function==========================
-  //===========================================handleOnSubmit================================================
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -103,7 +98,6 @@ export const LogIn = () => {
       setLoading(false);
       const error = resultAction.payload.message;
 
-      //auto vanish for timer ids except the last one, for invalid input pop-up
       const timer = setTimeout(() => {
         setPath(null);
       }, 5000);
@@ -114,7 +108,6 @@ export const LogIn = () => {
         }
       }
 
-      //toast.warn trigger if error is string
       if (typeof error === "string") {
         setTries((prev) => {
           if (prev <= 0) return 0;
@@ -122,22 +115,19 @@ export const LogIn = () => {
         });
 
         if (tries && error.includes("Too many failed attempts")) {
-          toast.warn("invalid email or password!");
+          toast.warn("Invalid email or password.");
           return;
         }
         toast.warn(error);
-
         return;
       }
 
-      //setting path to relavent input name if error is an object
       if (
         typeof error === "object" &&
         Array.isArray(error.path) &&
         error.path[0].length > 0
       ) {
-        const field = error.path[0];
-        setPath(field);
+        setPath(error.path[0]);
       }
 
       return;
@@ -151,13 +141,11 @@ export const LogIn = () => {
         purpose: "login",
       });
 
-      const success = resultAction.payload?.message;
-      toast.success(success);
+      toast.success(resultAction.payload?.message);
       navigate("/verify-otp", { replace: true });
     }
   }
 
-  //=================================countdoun for blocked log-in to un-lock=================================
   const [disable, setDisable] = useState(false);
   const [tryPassReset, setTryPassReset] = useState(() => {
     return JSON.parse(localStorage.getItem("tryPassReset")) || false;
@@ -167,7 +155,9 @@ export const LogIn = () => {
   useEffect(() => {
     localStorage.setItem("tryRemains", JSON.stringify(tries));
 
-    tries === 0 ? trackTime() : tries;
+    if (tries === 0) {
+      trackTime();
+    }
 
     let timer;
 
@@ -192,7 +182,6 @@ export const LogIn = () => {
     return () => clearTimeout(timer);
   }, [tries]);
 
-  // function to cancel password reset procedure
   function resetCancel() {
     localStorage.removeItem("tryPassReset");
     runCountRef.current += 1;
@@ -200,13 +189,10 @@ export const LogIn = () => {
     setTryPassReset(false);
   }
 
-  //function to proceed for password reset
   function passReset() {
     localStorage.setItem("otpResetTrigger", JSON.stringify(true));
     navigate("/reset-password");
   }
-
-  // tracking remains time of blocked log-in users
 
   async function trackTime() {
     if (tries === 0) {
@@ -214,17 +200,16 @@ export const LogIn = () => {
       const time = await dispatch(logInOtpReceived(clientCredentials));
 
       if (logInOtpReceived.rejected.match(time)) {
-        let error = time.payload.message;
+        const error = time.payload.message;
         if (!error.includes("Too many failed attempts")) {
-          setCountdown(0); // fallback
+          setCountdown(0);
         }
         if (error.includes("Too many failed attempts")) {
-          let match = error.match(/(\d+)m\s*(\d+)s/);
+          const match = error.match(/(\d+)m\s*(\d+)s/);
           if (match) {
-            let minutes = Number(match[1]);
-            let seconds = Number(match[2]);
-            let totalSeconds = minutes * 60 + seconds;
-            setCountdown(totalSeconds);
+            const minutes = Number(match[1]);
+            const seconds = Number(match[2]);
+            setCountdown(minutes * 60 + seconds);
           }
         }
       }
@@ -254,19 +239,14 @@ export const LogIn = () => {
   const minutes = countdown !== null ? Math.floor(countdown / 60) : 0;
   const seconds = countdown !== null ? countdown % 60 : 0;
 
-  //========================================invalid input viewer handling====================================
-  //================================================onFocusTrigger===========================================
   function onFocusTrigger(event) {
     if (event.target.name === path) {
       setPath(null);
     }
   }
 
-  //==============================================password viewer============================================
-  //==============================================handleInputView============================================
   const [view, setView] = useState(false);
   const timerRef = useRef(null);
-
   const inputType = view ? "text" : "password";
 
   function handleInputView() {
@@ -291,67 +271,105 @@ export const LogIn = () => {
     };
   }, [view]);
 
-  //=========================================navigating to sign up page======================================
-  //================================================handleNavigate===========================================
   function handleNavigate() {
     localStorage.removeItem("user");
     navigate("/signup", { replace: true });
   }
 
-  //==========================loading viewing on every handleOnSubmit trigger==============================
-  const email = "your email";
-  if (!hydrated) return null; // ✅ HERE (very important)
+  const loadingEmail = "your email";
+  if (!hydrated) return null;
 
   if (loading) {
     return (
-      <section className={styles["form-loading-state"]}>
-        <h1>sending verification code to {clientCredentials.email || email}</h1>
+      <section className={styles["auth-loading-state"]}>
+        <div className={styles["auth-loading-card"]}>
+          <img src={globMe} alt="globMe" className={styles["loading-logo"]} />
+          <p className={styles["loading-kicker"]}>Signing you in</p>
+          <h1>Sending a verification code to {clientCredentials.email || loadingEmail}</h1>
+          <span className={styles["loading-glow"]}></span>
+        </div>
       </section>
     );
   }
 
-  //========================================main html content================================================
   return (
-    <main className={styles["main-container-first"]}>
-      {tries > 0 ? (
-        <section className={stylie["try-remains"]}>
-          <p>Try Remains : {tries}</p>
-        </section>
-      ) : countdown > 0 ? (
-        <section className={stylie["try-remains"]}>
-          <p>
-            log-in session blocked for {minutes}min : {seconds}sec for{" "}
-            {clientCredentials.email}
-          </p>
-        </section>
-      ) : null}
-
+    <main className={styles["auth-page"]}>
       {tryPassReset && (
-        <section className={stylie["try-pass-reset"]}>
-          <h1>if password forgotten, click on reset or else click on cancel</h1>
-          <div>
-            <button className={stylie["cancel"]} onClick={resetCancel}>
-              cancel
-            </button>
-            <button className={stylie["reset"]} onClick={passReset}>
-              reset
-            </button>
+        <section className={stylie["reset-overlay"]}>
+          <div className={stylie["reset-overlay-card"]}>
+            <p className={stylie["overlay-kicker"]}>Need a different path?</p>
+            <h1>Use password reset if you no longer remember your password.</h1>
+            <div className={stylie["overlay-actions"]}>
+              <button className={stylie["cancel"]} onClick={resetCancel}>
+                Cancel
+              </button>
+              <button className={stylie["reset"]} onClick={passReset}>
+                Reset Password
+              </button>
+            </div>
           </div>
         </section>
       )}
 
-      <section className={styles["main-container-second"]}>
-        <article className={styles["main-container-third"]}>
-          <h1 className={styles["login-main-heading"]}>please log in first</h1>
+      <section className={styles["auth-shell"]}>
+        <aside className={styles["auth-brand-panel"]}>
+          <div className={styles["brand-badge"]}>globMe</div>
+          <img src={globMe} alt="globMe" className={styles["brand-logo"]} />
+          <h1 className={styles["brand-title"]}>Meet people beyond your map.</h1>
+          <p className={styles["brand-copy"]}>
+            Log in to continue your world-wise conversations, profile updates,
+            and friend discoveries in one place.
+          </p>
+          <div className={styles["brand-highlights"]}>
+            <div>
+              <span>Private sign-in</span>
+              <p>Protected by email verification before access is granted.</p>
+            </div>
+            <div>
+              <span>Fast recovery</span>
+              <p>Reset guidance appears automatically when sign-in gets stuck.</p>
+            </div>
+          </div>
+        </aside>
+
+        <section className={styles["auth-card"]}>
+          <div className={styles["auth-card-header"]}>
+            <p className={styles["auth-kicker"]}>Welcome back</p>
+            <h2 className={styles["auth-heading"]}>Log in to your account</h2>
+            <p className={styles["auth-subcopy"]}>
+              Enter your email and password. We will send an OTP before
+              completing sign-in.
+            </p>
+          </div>
+
+          {tries > 0 ? (
+            <section className={stylie["status-banner"]}>
+              <span className={stylie["status-label"]}>Attempts left</span>
+              <strong>{tries}</strong>
+            </section>
+          ) : countdown > 0 ? (
+            <section
+              className={`${stylie["status-banner"]} ${stylie["status-warning"]}`}
+            >
+              <span className={stylie["status-label"]}>Session temporarily blocked</span>
+              <strong>
+                {minutes}m {seconds}s
+              </strong>
+              <p>{clientCredentials.email}</p>
+            </section>
+          ) : null}
+
           <div className={styles["login-form-container"]}>
             <form autoComplete="off" onSubmit={handleOnSubmit}>
               <div className={styles["input-elm"]}>
-                <label htmlFor="email">Email :</label>
+                <label htmlFor="email">Email address</label>
                 <input
                   id="email"
-                  type="text"
+                  type="email"
                   name="email"
-                  placeholder="your email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="name@example.com"
                   onChange={handleOnChange}
                   value={clientCredentials.email}
                   onFocus={onFocusTrigger}
@@ -366,27 +384,25 @@ export const LogIn = () => {
               </div>
 
               <div className={styles["input-elm"]}>
-                {view ? (
-                  <span
-                    className={styles["view-password"]}
-                    onClick={handleInputView}
-                  >
+                <label htmlFor="password">Password</label>
+                <button
+                  type="button"
+                  className={styles["password-toggle"]}
+                  onClick={handleInputView}
+                  aria-label={view ? "Hide password" : "Show password"}
+                >
+                  {view ? (
                     <MdOutlineRemoveRedEye className={styles["eye"]} />
-                  </span>
-                ) : (
-                  <span
-                    className={styles["view-password"]}
-                    onClick={handleInputView}
-                  >
+                  ) : (
                     <FaRegEyeSlash className={styles["eye"]} />
-                  </span>
-                )}
-                <label htmlFor="password">Password :</label>
+                  )}
+                </button>
                 <input
                   id="password"
                   type={inputType}
                   name="password"
-                  placeholder="your password"
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
                   onChange={handleOnChange}
                   value={clientCredentials.password}
                   onFocus={onFocusTrigger}
@@ -401,20 +417,33 @@ export const LogIn = () => {
               </div>
 
               <div className={styles["btn-container"]}>
-                <button className={styles["log-in-btn"]} type="submit">
-                  log-in
+                <button
+                  className={styles["primary-btn"]}
+                  type="submit"
+                  disabled={
+                    disable ||
+                    !clientCredentials.email.trim() ||
+                    !clientCredentials.password.trim()
+                  }
+                >
+                  Continue with OTP
                 </button>
                 <button
-                  className={style["sign-up-btn"]}
+                  className={style["secondary-btn"]}
                   type="button"
                   onClick={handleNavigate}
                 >
-                  sign-up
+                  Create account
                 </button>
               </div>
+
+              <p className={styles["form-footer-note"]}>
+                You will only be signed in after verifying the code sent to your
+                email.
+              </p>
             </form>
           </div>
-        </article>
+        </section>
       </section>
     </main>
   );
