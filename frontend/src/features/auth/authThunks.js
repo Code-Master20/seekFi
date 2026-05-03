@@ -1,4 +1,4 @@
-import api from "../../utils/api";
+import api from "../../lib/api";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 //========================tracking if user is already logged in==========================
 export const checkMe = createAsyncThunk("auth/isMe", async (_, thunkAPI) => {
@@ -184,7 +184,7 @@ export const uploadProfilePic = createAsyncThunk(
   async (file, thunkAPI) => {
     try {
       const formData = new FormData();
-      formData.append("file", file); // must match multer.single("file")
+      formData.append("image", file); // must match multer.single("image")
 
       const response = await api.post("/user/upload-avatar", formData, {
         headers: {
@@ -208,7 +208,7 @@ export const uploadBanner = createAsyncThunk(
   async (file, thunkAPI) => {
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("image", file);
 
       const response = await api.post("/user/upload-banner", formData, {
         headers: {

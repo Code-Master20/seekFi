@@ -1,20 +1,17 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
-const connectDB = require("./utils/database.util");
+const connectDB = require("./src/config/database.util");
 const cookieParser = require("cookie-parser");
-const signUpRoute = require("./routers/signup.router");
-const logInRoute = require("./routers/login.router");
-const logOutRoute = require("./routers/logout.router");
-const passResetRoute = require("./routers/resetPass.router");
-// const uploadRoute = require("./routers/upl");
-// const postRoute = require("./routers/post.router");
-const userMediaRoute = require("./routers/userMedia.router");
-const meRoute = require("./routers/me.router");
+const signUpRoute = require("./src/routes/signup.router");
+const logInRoute = require("./src/routes/login.router");
+const logOutRoute = require("./src/routes/logout.router");
+const passResetRoute = require("./src/routes/resetPass.router");
+const userMediaRoute = require("./src/routes/userMedia.router");
+const meRoute = require("./src/routes/me.router");
 const cors = require("cors");
 const app = express();
 const isProd = process.env.NODE_ENV === "production";
-
 const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
@@ -22,6 +19,7 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
