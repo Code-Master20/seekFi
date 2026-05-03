@@ -125,10 +125,16 @@ export const SignUp = () => {
 
   const [view, setView] = useState(false);
   const timerRef = useRef(null);
+  const passwordInputRef = useRef(null);
   const inputType = view ? "text" : "password";
 
   function handleInputView() {
     setView((prev) => !prev);
+    requestAnimationFrame(() => {
+      passwordInputRef.current?.focus();
+      const cursorPos = passwordInputRef.current?.value?.length ?? 0;
+      passwordInputRef.current?.setSelectionRange?.(cursorPos, cursorPos);
+    });
   }
 
   useEffect(() => {
@@ -249,17 +255,21 @@ export const SignUp = () => {
                 <button
                   type="button"
                   className={styles["password-toggle"]}
+                  onMouseDown={(event) => event.preventDefault()}
                   onClick={handleInputView}
                   aria-label={view ? "Hide password" : "Show password"}
+                  aria-pressed={view}
+                  title={view ? "Hide password" : "Show password"}
                 >
                   {view ? (
-                    <MdOutlineRemoveRedEye className={styles["eye"]} />
-                  ) : (
                     <FaRegEyeSlash className={styles["eye"]} />
+                  ) : (
+                    <MdOutlineRemoveRedEye className={styles["eye"]} />
                   )}
                 </button>
                 <input
                   id="password"
+                  ref={passwordInputRef}
                   type={inputType}
                   name="password"
                   autoComplete="new-password"
